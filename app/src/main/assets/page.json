@@ -1,0 +1,15 @@
+[
+  {
+    "name": "test1",
+    "class": "com.kltz88.alldemo.TestFragment1",
+    "params": {
+      "param1": "value1",
+      "param2": "value2"
+    }
+  },
+  {
+    "name": "test2",
+    "class": "com.kltz88.alldemo.TestFragment2",
+    "params": ""
+  }
+]
