@@ -3,7 +3,7 @@
     package="com.kltz88.alldemo" >
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:name=".page.App"
+        android:name="cn.edu.zafu.library.app.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,14 +16,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="com.kltz88.alldemo.page.BaseActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="standard"
-            android:screenOrientation="portrait"
-            android:exported="false"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
     </application>
 
