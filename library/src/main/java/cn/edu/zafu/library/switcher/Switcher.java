@@ -22,6 +22,7 @@ public interface Switcher {
 
     /**
      * fragmentTag 是否在当前顶上activity上的最顶上的fragment
+     *
      * @param fragmentTag
      * @return
      */
@@ -30,6 +31,7 @@ public interface Switcher {
 
     /**
      * 是否查找到某个page
+     *
      * @param pageName
      * @return
      */
@@ -37,6 +39,7 @@ public interface Switcher {
 
     /**
      * 跳转到某一个页面。
+     *
      * @param bean
      * @return
      */
@@ -44,6 +47,7 @@ public interface Switcher {
 
     /**
      * 打开一个新的页面
+     *
      * @param bean
      * @return
      */
@@ -51,6 +55,7 @@ public interface Switcher {
 
     /**
      * 打开一个新的页面
+     *
      * @param pageName
      * @param bundle
      * @param anim
@@ -58,10 +63,11 @@ public interface Switcher {
      * @param newActivity
      * @return
      */
-    Fragment openPage(String pageName,Bundle bundle,Anim anim,boolean addToBackStack,boolean newActivity);
+    Fragment openPage(String pageName, Bundle bundle, Anim anim, boolean addToBackStack, boolean newActivity);
 
     /**
      * 打开一个新的页面
+     *
      * @param pageName
      * @param bundle
      * @param anim
@@ -69,32 +75,35 @@ public interface Switcher {
      * @param newActivity
      * @return
      */
-    Fragment openPage(String pageName,Bundle bundle,int[] anim,boolean addToBackStack,boolean newActivity);
+    Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack, boolean newActivity);
 
 
     /**
      * 打开一个新的页面,不开启新activity
+     *
      * @param pageName
      * @param bundle
      * @param anim
      * @param addToBackStack
      * @return
      */
-    Fragment openPage(String pageName,Bundle bundle,Anim anim,boolean addToBackStack);
+    Fragment openPage(String pageName, Bundle bundle, Anim anim, boolean addToBackStack);
 
     /**
      * 打开一个新的页面,不开启新activity
+     *
      * @param pageName
      * @param bundle
      * @param anim
      * @param addToBackStack
      * @return
      */
-    Fragment openPage(String pageName,Bundle bundle,int [] anim,boolean addToBackStack);
+    Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack);
 
 
     /**
      * 打开一个新的页面,不开启新activity，加到返回栈
+     *
      * @param pageName
      * @param bundle
      * @param anim
@@ -104,6 +113,7 @@ public interface Switcher {
 
     /**
      * 打开一个新的页面,不开启新activity，加到返回栈
+     *
      * @param pageName
      * @param bundle
      * @param anim
@@ -113,12 +123,14 @@ public interface Switcher {
 
     /**
      * 移除当前Acitivity不需要的fragment
+     *
      * @param fragmentLists
      */
     void removeUnlessFragment(List<String> fragmentLists);
 
     /**
      * 页面跳转，支持跨Activity进行传递数据
+     *
      * @param page
      * @param fragment
      * @return

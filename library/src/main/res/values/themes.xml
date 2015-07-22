@@ -1,5 +1,5 @@
 <resources>
-    <style name="BaseActivityTheme" parent="@android:style/Theme.NoTitleBar">
+    <style name="BaseActivityTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowContentOverlay">@null</item>
     </style>
 

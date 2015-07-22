@@ -1,10 +1,13 @@
 package com.kltz88.alldemo;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import cn.edu.zafu.library.anim.Anim;
 import cn.edu.zafu.library.ui.BaseFragment;
 
 
@@ -20,10 +23,16 @@ public class TestFragment1 extends BaseFragment {
         view.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // openPage(false,"test2",null,true);
 
+                //openPage("test2",null, Anim.slide,true);
+                openPageForResult("test2",null, Anim.slide,101);
             }
         });
         return view;
+    }
+    @Override
+    public void onFragmentResult(int requestCode, int resultCode, Intent data) {
+        Log.d("Test", requestCode + " " + resultCode + " " + data.getStringExtra("test1"));
+        super.onFragmentResult(requestCode, resultCode, data);
     }
 }

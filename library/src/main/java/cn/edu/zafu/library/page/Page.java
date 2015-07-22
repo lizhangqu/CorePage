@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Date:2015-07-22
  * Time: 09:34
  */
-public class Page implements Serializable{
+public class Page implements Serializable {
     private static final long serialVersionUID = 3736359137726536495L;
 
     private String mName;

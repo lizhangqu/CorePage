@@ -38,30 +38,13 @@ import cn.edu.zafu.library.switcher.Switcher;
  * Date:2015-07-22
  * Time: 09:32
  */
-public class BaseActivity extends FragmentActivity implements Switcher{
-    private static final String TAG=BaseActivity.class.getSimpleName();
-    private Handler mHandler=null;
-    private WeakReference<BaseActivity> mCurrentInstance=null;
-    private static List<WeakReference<BaseActivity>> mActivities=new ArrayList<WeakReference<BaseActivity>>();
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
-        if (null != savedInstanceState) {
-            loadActivitySavedData(savedInstanceState);
-        }
-        mHandler=new Handler(getMainLooper());
-        mCurrentInstance = new WeakReference<BaseActivity>(this);
-        mActivities.add(mCurrentInstance);
-        printAllActivities();
-
-        // 接收程序退出广播
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Config.ACTION_EXIT_APP);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        App.getLocalBroadcastManager().registerReceiver(mExitReceiver, filter);
-    }
+public class BaseActivity extends FragmentActivity implements Switcher {
+    private static final String TAG = BaseActivity.class.getSimpleName();
+    private static List<WeakReference<BaseActivity>> mActivities = new ArrayList<WeakReference<BaseActivity>>();
+    private Handler mHandler = null;
+    private WeakReference<BaseActivity> mCurrentInstance = null;
+    private BaseFragment mFragmentForResult = null;
+    private int mFragmentRequestCode = -1;
     /**
      * 仅用于接受应用退出广播，程序退出时有机会做一些必要的清理工作
      */
@@ -71,44 +54,12 @@ public class BaseActivity extends FragmentActivity implements Switcher{
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(Config.ACTION_EXIT_APP)) {
+                Log.d(TAG,"exit from broadcast");
                 finish();
             }
         }
     };
-    private void printAllActivities() {
-        Log.d(TAG, "------------BaseActivity print all------------" + mActivities.size());
-        for (WeakReference<BaseActivity> ref : mActivities) {
-            if (ref != null) {
-                BaseActivity item = ref.get();
-                if (item != null) {
-                    Log.d(TAG, item.toString());
-                }
-            }
-        }
-    }
 
-    @Override
-    public void onBackPressed() {
-        if (this.getSupportFragmentManager().getBackStackEntryCount()==1){
-            this.finishActivity(this, true);
-        }else{
-            super.onBackPressed();
-        }
-    }
-    public BaseFragment getActiveFragment() {
-        if (this.isFinishing()){
-            return null;
-        }
-        FragmentManager manager=this.getSupportFragmentManager();
-        if (manager!=null){
-            int count=manager.getBackStackEntryCount();
-            if (count>0){
-                String tag=manager.getBackStackEntryAt(count-1).getName();
-                return (BaseFragment)manager.findFragmentByTag(tag);
-            }
-        }
-        return null;
-    }
     public static BaseActivity getTopActivity() {
         if (mActivities != null) {
             int size = mActivities.size();
@@ -123,11 +74,45 @@ public class BaseActivity extends FragmentActivity implements Switcher{
     }
 
     @Override
+    public void onBackPressed() {
+        if (this.getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            this.finishActivity(this, true);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_base);
+        Intent mNewIntent = getIntent();
+        if (null != savedInstanceState) {
+            loadActivitySavedData(savedInstanceState);
+        }
+        mHandler = new Handler(getMainLooper());
+        mCurrentInstance = new WeakReference<BaseActivity>(this);
+        init(mNewIntent);
+        mActivities.add(mCurrentInstance);
+        printAllActivities();
+
+        // 接收程序退出广播
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Config.ACTION_EXIT_APP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        App.getLocalBroadcastManager().registerReceiver(mExitReceiver, filter);
+    }
+    public static void unInit() {
+        if (mActivities != null) {
+            mActivities.clear();
+        }
+    }
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         BaseFragment activeFragment = getActiveFragment();
-        boolean isHanlde=false;
-        if (activeFragment!=null){
-            isHanlde=activeFragment.onKeyDown(keyCode,event);
+        boolean isHanlde = false;
+        if (activeFragment != null) {
+            isHanlde = activeFragment.onKeyDown(keyCode, event);
         }
         if (!isHanlde) {
             return super.onKeyDown(keyCode, event);
@@ -135,284 +120,22 @@ public class BaseActivity extends FragmentActivity implements Switcher{
             return isHanlde;
         }
     }
-    protected String getPageName() {
-        BaseFragment frg = getActiveFragment();
-        if (frg != null) {
-            return frg.getPageName();
-        }
-        return "";
-    }
 
-    private boolean isMainThread() {
-        return Thread.currentThread() == this.getMainLooper().getThread();
-    }
-    private void popOrFinishActivity(){
-        if (this.isFinishing()){
-            return;
-        }
-        if (this.getSupportFragmentManager().getBackStackEntryCount()>1){
-            if (isMainThread()){
-                this.getSupportFragmentManager().popBackStackImmediate();
-            }else{
-                this.mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        getSupportFragmentManager().popBackStackImmediate();
-                    }
-                });
-            }
-        }else{
-            finishActivity(this,true);
-        }
-
-    }
-
-    protected boolean popFragmentInActivity(final String pageName, Bundle bundle, BaseActivity findAcitivity) {
-        if (pageName == null || findAcitivity == null || findAcitivity.isFinishing()) {
-            return false;
-        } else {
-            final FragmentManager fragmentManager = findAcitivity.getSupportFragmentManager();
-            if (fragmentManager != null) {
-                Fragment frg = fragmentManager.findFragmentByTag(pageName);
-                if (frg != null && frg instanceof BaseFragment) {
-                    if (fragmentManager.getBackStackEntryCount() > 1 && mHandler != null) {
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                fragmentManager.popBackStack(pageName, 0);
-                            }
-                        }, 100);
-                    }
-                    //((BaseActivity) frg).onFragmentDataReset(bundle);
-                    //待实现
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    private void finishActivity(BaseActivity activity,boolean showAnimation) {
-        if (activity!=null){
-            activity.finish();
-        }
-        if (showAnimation){
-            //动画，待实现
-        }
-    }
-
-    @Override
-    public boolean isFragmentTop(String fragmentTag) {
-        int size=mActivities.size();
-        if (size>0){
-            WeakReference<BaseActivity> ref=mActivities.get(size-1);
-            BaseActivity item=ref.get();
-            if (item!=null&&item==this){
-                FragmentActivity activity=item;
-                FragmentManager manager=activity.getSupportFragmentManager();
-                if (manager!=null){
-                    int count=manager.getBackStackEntryCount();
-                    if (count>=1){
-                        FragmentManager.BackStackEntry entry=manager.getBackStackEntryAt(count-1);
-                        if (entry.getName().equalsIgnoreCase(fragmentTag)){
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void popPage() {
-        popOrFinishActivity();
-
-    }
-
-
-    @Override
-    public boolean findPage(String pageName) {
-        int size=mActivities.size();
-        int j=size-1;
-        boolean hasFind=false;
-        for (;j>=0;j--){
-            WeakReference<BaseActivity> ref=mActivities.get(j);
-            if (ref!=null){
-                BaseActivity item=ref.get();
-                if (item==null){
-                    Log.d(TAG, "item is null");
-                    continue;
-                }
-                FragmentManager manager=item.getSupportFragmentManager();
-                int count=manager.getBackStackEntryCount();
-                for (int i = count - 1; i >= 0; i--) {
-                    String name = manager.getBackStackEntryAt(i).getName();
-                    if (name.equalsIgnoreCase(pageName)){
-                        hasFind=true;
-                        break;
-                    }
-                }
-                if (hasFind){
-                    break;
-                }
-            }
-        }
-        return hasFind;
-    }
-
-    @Override
-    public Fragment gotoPage(SwitchBean page) {
-        if (page==null){
-            Log.e(TAG, "page name empty");
+    public BaseFragment getActiveFragment() {
+        if (this.isFinishing()) {
             return null;
         }
-        String pageName=page.getPageName();
-        if (!findPage(pageName)){
-            Log.d(TAG, "Be sure you have the right pageName" + pageName);
-            return this.openPage(page);
-        }
-
-        int size=mActivities.size();
-        int i=size-1;
-        for (;i>=0;i--) {
-            WeakReference<BaseActivity> ref = mActivities.get(i);
-            if (ref!=null){
-                BaseActivity item=ref.get();
-                if (item==null){
-                    Log.d(TAG,"item null");
-                    continue;
-                }
-
-                boolean findInActivity=popFragmentInActivity(pageName,page.getBundle(),item);
-                if (findInActivity){
-                    break;
-                }else{
-                    item.finish();
-                    // 找不到就弹出
-                }
+        FragmentManager manager = this.getSupportFragmentManager();
+        if (manager != null) {
+            int count = manager.getBackStackEntryCount();
+            if (count > 0) {
+                String tag = manager.getBackStackEntryAt(count - 1).getName();
+                return (BaseFragment) manager.findFragmentByTag(tag);
             }
         }
         return null;
     }
 
-
-
-    @Override
-    public Fragment openPage(SwitchBean page) {
-        boolean addToBackStack=page.isAddToBackStack();
-        boolean newActivity=page.isNewActivity();
-        Bundle bundle=page.getBundle();
-        int [] animations=page.getAnim();
-        if (newActivity){
-            startActivity(page);
-            return null;
-        }else{
-            String pageName=page.getPageName();
-            return PageManager.getInstance().openPageWithNewFragmentManager(getSupportFragmentManager(), pageName, bundle, animations, addToBackStack);
-        }
-
-    }
-    public  void startActivity(SwitchBean page){
-        try{
-            Intent intent=new Intent(this,BaseActivity.class);
-            intent.putExtra("SwitchBean",page);
-            this.startActivity(intent);
-            int[] animations=page.getAnim();
-            if (animations!=null&&animations.length>=2){
-                this.overridePendingTransition(animations[0], animations[1]);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            Log.e(TAG, e.getMessage());
-        }
-    }
-    public void startActivityForResult(SwitchBean page) {
-        try {
-            Intent intent = new Intent(this, BaseActivity.class);
-            intent.putExtra("SwitchBean", page);
-            intent.putExtra("startActivityForResult", "true");
-            this.startActivityForResult(intent, page.getRequestCode());
-
-            int[] animations = page.getAnim();
-            if (animations != null && animations.length >= 2) {
-                this.overridePendingTransition(animations[0], animations[1]);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    @Override
-    public void removeUnlessFragment(List<String> fragmentLists) {
-        if (this.isFinishing()){
-            return;
-        }
-        FragmentManager manager=getSupportFragmentManager();
-        if (manager!=null){
-            FragmentTransaction transaction=manager.beginTransaction();
-            for (String tag:fragmentLists){
-                Fragment fragment=manager.findFragmentByTag(tag);
-                if (fragment!=null){
-                    transaction.remove(fragment);
-                }
-            }
-            transaction.commitAllowingStateLoss();
-            int count=manager.getBackStackEntryCount();
-            if (count==0){
-                this.finish();
-            }
-        }
-    }
-
-    @Override
-    public Fragment openPageForResult(SwitchBean page, BaseFragment fragment) {
-        if (page!=null){
-            if (page.isNewActivity()){
-
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Fragment openPage(String pageName, Bundle bundle, Anim anim, boolean addToBackStack, boolean newActivity) {
-        SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack, newActivity);
-        return openPage(page);
-    }
-
-    @Override
-    public Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack, boolean newActivity) {
-        SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack, newActivity);
-        return openPage(page);
-    }
-
-    @Override
-    public Fragment openPage(String pageName, Bundle bundle, Anim anim, boolean addToBackStack) {
-        SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack);
-        return openPage(page);
-    }
-
-    @Override
-    public Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack) {
-        SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack);
-        return openPage(page);
-    }
-
-    @Override
-    public Fragment openPage(String pageName, Bundle bundle, Anim anim) {
-        SwitchBean page = new SwitchBean(pageName, bundle, anim);
-        return openPage(page);
-    }
-
-    @Override
-    public Fragment openPage(String pageName, Bundle bundle, int[] anim) {
-        SwitchBean page = new SwitchBean(pageName, bundle, anim);
-        return openPage(page);
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.FIELD)
-    public @interface SaveWithActivity {
-    }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Field[] fields = this.getClass().getDeclaredFields();
@@ -468,6 +191,7 @@ public class BaseActivity extends FragmentActivity implements Switcher{
 
         super.onSaveInstanceState(outState);
     }
+
     private void loadActivitySavedData(Bundle savedInstanceState) {
         Field[] fields = this.getClass().getDeclaredFields();
         Field.setAccessible(fields, true);
@@ -517,5 +241,361 @@ public class BaseActivity extends FragmentActivity implements Switcher{
                 }
             }
         }
+    }
+
+    private void init(Intent mNewIntent) {
+        try {
+            SwitchBean page = mNewIntent.getParcelableExtra("SwitchBean");
+            String startActivityForResult = mNewIntent.getStringExtra("startActivityForResult");
+            if (page != null) {
+                BaseFragment fragment = null;
+                boolean addToBackStack = page.isAddToBackStack();
+                String pageName = page.getPageName();
+                Bundle bundle = page.getBundle();
+                fragment = (BaseFragment) PageManager.getInstance().openPageWithNewFragmentManager(getSupportFragmentManager(), pageName, bundle, null, addToBackStack);
+                if (fragment != null) {
+                    if ("true".equalsIgnoreCase(startActivityForResult)) {
+                        fragment.setRequestCode(page.getRequestCode());
+                        fragment.setFragmentFinishListener(new BaseFragment.OnFragmentFinishListener() {
+                            @Override
+                            public void onFragmentResult(int requestCode, int resultCode, Intent intent) {
+                                BaseActivity.this.setResult(resultCode, intent);
+                            }
+                        });
+                    }
+                } else {
+                    this.finish();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, e.getMessage());
+            this.finish();
+        }
+    }
+
+    private void printAllActivities() {
+        Log.d(TAG, "------------BaseActivity print all------------" + mActivities.size());
+        for (WeakReference<BaseActivity> ref : mActivities) {
+            if (ref != null) {
+                BaseActivity item = ref.get();
+                if (item != null) {
+                    Log.d(TAG, item.toString());
+                }
+            }
+        }
+    }
+
+    private void finishActivity(BaseActivity activity, boolean showAnimation) {
+        if (activity != null) {
+            activity.finish();
+        }
+        if (showAnimation) {
+            //动画，待实现
+        }
+    }
+
+    protected String getPageName() {
+        BaseFragment frg = getActiveFragment();
+        if (frg != null) {
+            return frg.getPageName();
+        }
+        return "";
+    }
+
+    @Override
+    public void popPage() {
+        popOrFinishActivity();
+
+    }
+
+    private void popOrFinishActivity() {
+        if (this.isFinishing()) {
+            return;
+        }
+        if (this.getSupportFragmentManager().getBackStackEntryCount() > 1) {
+            if (isMainThread()) {
+                this.getSupportFragmentManager().popBackStackImmediate();
+            } else {
+                this.mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        getSupportFragmentManager().popBackStackImmediate();
+                    }
+                });
+            }
+        } else {
+            finishActivity(this, true);
+        }
+
+    }
+
+    private boolean isMainThread() {
+        return Thread.currentThread() == this.getMainLooper().getThread();
+    }
+
+    @Override
+    public boolean isFragmentTop(String fragmentTag) {
+        int size = mActivities.size();
+        if (size > 0) {
+            WeakReference<BaseActivity> ref = mActivities.get(size - 1);
+            BaseActivity item = ref.get();
+            if (item != null && item == this) {
+                FragmentActivity activity = item;
+                FragmentManager manager = activity.getSupportFragmentManager();
+                if (manager != null) {
+                    int count = manager.getBackStackEntryCount();
+                    if (count >= 1) {
+                        FragmentManager.BackStackEntry entry = manager.getBackStackEntryAt(count - 1);
+                        if (entry.getName().equalsIgnoreCase(fragmentTag)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean findPage(String pageName) {
+        int size = mActivities.size();
+        int j = size - 1;
+        boolean hasFind = false;
+        for (; j >= 0; j--) {
+            WeakReference<BaseActivity> ref = mActivities.get(j);
+            if (ref != null) {
+                BaseActivity item = ref.get();
+                if (item == null) {
+                    Log.d(TAG, "item is null");
+                    continue;
+                }
+                FragmentManager manager = item.getSupportFragmentManager();
+                int count = manager.getBackStackEntryCount();
+                for (int i = count - 1; i >= 0; i--) {
+                    String name = manager.getBackStackEntryAt(i).getName();
+                    if (name.equalsIgnoreCase(pageName)) {
+                        hasFind = true;
+                        break;
+                    }
+                }
+                if (hasFind) {
+                    break;
+                }
+            }
+        }
+        return hasFind;
+    }
+
+    @Override
+    public Fragment gotoPage(SwitchBean page) {
+        if (page == null) {
+            Log.e(TAG, "page name empty");
+            return null;
+        }
+        String pageName = page.getPageName();
+        if (!findPage(pageName)) {
+            Log.d(TAG, "Be sure you have the right pageName" + pageName);
+            return this.openPage(page);
+        }
+
+        int size = mActivities.size();
+        int i = size - 1;
+        for (; i >= 0; i--) {
+            WeakReference<BaseActivity> ref = mActivities.get(i);
+            if (ref != null) {
+                BaseActivity item = ref.get();
+                if (item == null) {
+                    Log.d(TAG, "item null");
+                    continue;
+                }
+
+                boolean findInActivity = popFragmentInActivity(pageName, page.getBundle(), item);
+                if (findInActivity) {
+                    break;
+                } else {
+                    item.finish();
+                    // 找不到就弹出
+                }
+            }
+        }
+        return null;
+    }
+
+    protected boolean popFragmentInActivity(final String pageName, Bundle bundle, BaseActivity findAcitivity) {
+        if (pageName == null || findAcitivity == null || findAcitivity.isFinishing()) {
+            return false;
+        } else {
+            final FragmentManager fragmentManager = findAcitivity.getSupportFragmentManager();
+            if (fragmentManager != null) {
+                Fragment frg = fragmentManager.findFragmentByTag(pageName);
+                if (frg != null && frg instanceof BaseFragment) {
+                    if (fragmentManager.getBackStackEntryCount() > 1 && mHandler != null) {
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                fragmentManager.popBackStack(pageName, 0);
+                            }
+                        }, 100);
+                    }
+                    //((BaseActivity) frg).onFragmentDataReset(bundle);
+                    //待实现
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void startActivity(SwitchBean page) {
+        try {
+            Intent intent = new Intent(this, BaseActivity.class);
+            intent.putExtra("SwitchBean", page);
+            this.startActivity(intent);
+            int[] animations = page.getAnim();
+            if (animations != null && animations.length >= 2) {
+                this.overridePendingTransition(animations[0], animations[1]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    public Fragment openPage(SwitchBean page) {
+        boolean addToBackStack = page.isAddToBackStack();
+        boolean newActivity = page.isNewActivity();
+        Bundle bundle = page.getBundle();
+        int[] animations = page.getAnim();
+        if (newActivity) {
+            startActivity(page);
+            return null;
+        } else {
+            String pageName = page.getPageName();
+            return PageManager.getInstance().openPageWithNewFragmentManager(getSupportFragmentManager(), pageName, bundle, animations, addToBackStack);
+        }
+
+    }
+
+    @Override
+    public Fragment openPage(String pageName, Bundle bundle, Anim anim, boolean addToBackStack, boolean newActivity) {
+        SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack, newActivity);
+        return openPage(page);
+    }
+
+    @Override
+    public Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack, boolean newActivity) {
+        SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack, newActivity);
+        return openPage(page);
+    }
+
+    @Override
+    public Fragment openPage(String pageName, Bundle bundle, Anim anim, boolean addToBackStack) {
+        SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack);
+        return openPage(page);
+    }
+
+    @Override
+    public Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack) {
+        SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack);
+        return openPage(page);
+    }
+
+    @Override
+    public Fragment openPage(String pageName, Bundle bundle, Anim anim) {
+        SwitchBean page = new SwitchBean(pageName, bundle, anim);
+        return openPage(page);
+    }
+
+    @Override
+    public Fragment openPage(String pageName, Bundle bundle, int[] anim) {
+        SwitchBean page = new SwitchBean(pageName, bundle, anim);
+        return openPage(page);
+    }
+
+    @Override
+    public void removeUnlessFragment(List<String> fragmentLists) {
+        if (this.isFinishing()) {
+            return;
+        }
+        FragmentManager manager = getSupportFragmentManager();
+        if (manager != null) {
+            FragmentTransaction transaction = manager.beginTransaction();
+            for (String tag : fragmentLists) {
+                Fragment fragment = manager.findFragmentByTag(tag);
+                if (fragment != null) {
+                    transaction.remove(fragment);
+                }
+            }
+            transaction.commitAllowingStateLoss();
+            int count = manager.getBackStackEntryCount();
+            if (count == 0) {
+                this.finish();
+            }
+        }
+    }
+
+    @Override
+    public Fragment openPageForResult(SwitchBean page, BaseFragment fragment) {
+        if (page != null) {
+            if (page.isNewActivity()) {
+                mFragmentForResult=fragment;
+                mFragmentRequestCode=page.getRequestCode();
+                startActivityForResult(page);
+                return null;
+            }else{
+                String pageName=page.getPageName();
+                Bundle bundle=page.getBundle();
+                int[] animations=page.getAnim();
+                boolean addToBackStack=page.isAddToBackStack();
+                BaseFragment frg = (BaseFragment)PageManager.getInstance().openPageWithNewFragmentManager(getSupportFragmentManager(), pageName, bundle, animations, addToBackStack);
+                if (frg==null){
+                    return null;
+                }
+                final BaseFragment opener= fragment;
+                frg.setRequestCode(page.getRequestCode());
+                frg.setFragmentFinishListener(new BaseFragment.OnFragmentFinishListener() {
+                    @Override
+                    public void onFragmentResult(int requestCode, int resultCode, Intent intent) {
+                        opener.onFragmentResult(requestCode,resultCode,intent);
+                    }
+                });
+                return frg;
+            }
+        }else{
+            Log.d(TAG, "openPageForResult.SwitchBean is null");
+        }
+        return null;
+    }
+
+    public void startActivityForResult(SwitchBean page) {
+        try {
+            Intent intent = new Intent(this, BaseActivity.class);
+            intent.putExtra("SwitchBean", page);
+            intent.putExtra("startActivityForResult", "true");
+            this.startActivityForResult(intent, page.getRequestCode());
+
+            int[] animations = page.getAnim();
+            if (animations != null && animations.length >= 2) {
+                this.overridePendingTransition(animations[0], animations[1]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult init-----------" + requestCode + " " + resultCode);
+        if (mFragmentRequestCode == requestCode && mFragmentForResult != null) {
+            mFragmentForResult.onFragmentResult(mFragmentRequestCode, resultCode, data);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public @interface SaveWithActivity {
     }
 }
