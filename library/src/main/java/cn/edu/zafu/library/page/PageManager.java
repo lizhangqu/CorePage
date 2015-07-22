@@ -25,6 +25,7 @@ import cn.edu.zafu.library.ui.BaseActivity;
 import cn.edu.zafu.library.ui.BaseFragment;
 
 /**
+ * 跳转页面管理
  * User:lizhangqu(513163535@qq.com)
  * Date:2015-07-22
  * Time: 09:34

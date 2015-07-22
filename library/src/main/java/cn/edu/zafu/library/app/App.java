@@ -37,6 +37,10 @@ public class App extends Application {
         mContext = this.getApplicationContext();
         PageManager.getInstance().init(this);
     }
+
+    /**
+     * 发送本地广播退出程序
+     */
     public static void exitApp() {
         Intent intent = new Intent();
         intent.setAction(Config.ACTION_EXIT_APP);

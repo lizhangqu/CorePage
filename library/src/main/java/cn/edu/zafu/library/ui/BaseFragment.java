@@ -26,22 +26,27 @@ public class BaseFragment extends Fragment {
     //页面名
     private int mRequestCode;
     //用于startForResult
-    private OnFragmentFinishListener mFragmentFinishListener;
-    //
     private Switcher mPageSwitcher;
+    //页面跳转接口
+    public interface OnFragmentFinishListener {
+        void onFragmentResult(int requestCode, int resultCode, Intent intent);
+    }
+    //openPageForResult接口，用于传递返回结果
+    private OnFragmentFinishListener mFragmentFinishListener;
 
-    public int getRequestCode() {
-        return this.mRequestCode;
+    /**
+     * 设置该接口用于返回结果
+     * @param listener
+     */
+    public void setFragmentFinishListener(OnFragmentFinishListener listener) {
+        this.mFragmentFinishListener = listener;
     }
 
-    public void setRequestCode(int code) {
-        this.mRequestCode = code;
-    }
-
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return false;
-    }
-
+    /**
+     * 设置openPageForResult打开的页面的返回结果
+     * @param resultCode
+     * @param intent
+     */
     public void setFragmentResult(int resultCode, Intent intent) {
         if (mFragmentFinishListener != null) {
             mFragmentFinishListener.onFragmentResult(mRequestCode, resultCode, intent);
@@ -49,12 +54,50 @@ public class BaseFragment extends Fragment {
     }
 
     /**
+     * 得到requestCode
+     * @return
+     */
+    public int getRequestCode() {
+        return this.mRequestCode;
+    }
+
+    /**
+     * 设置requestCode
+     * @param code
+     */
+    public void setRequestCode(int code) {
+        this.mRequestCode = code;
+    }
+
+    /**
+     * 将Activity中onKeyDown在Fragment中实现，
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return false;
+    }
+
+    /**
+     * 数据设置，回调
+     * @param bundle
+     */
+    public void onFragmentDataReset(Bundle bundle) {
+
+    }
+    /**
      * 弹出栈顶的Fragment。如果Activity中只有一个Fragemnt时，Acitivity也退出。
      */
     public void popToBack() {
         this.popToBack(null, null);
     }
 
+    /**
+     * 如果在fragment栈中找到，则跳转到该fragment中去，否则弹出栈顶
+     * @param pageName
+     * @param bundle
+     */
     public final void popToBack(String pageName, Bundle bundle) {
         Switcher switcher = getSwitcher();
         if (switcher != null) {
@@ -73,6 +116,10 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    /**
+     * 得到页面切换Switcher
+     * @return
+     */
     public Switcher getSwitcher() {
         synchronized (BaseFragment.this) {// 加强保护，保证pageSwitcher 不为null
             if (mPageSwitcher == null) {
@@ -94,6 +141,11 @@ public class BaseFragment extends Fragment {
         this.mPageSwitcher = pageSwitcher;
     }
 
+    /**
+     * 查找fragment是否存在
+     * @param pageName
+     * @return
+     */
     public boolean findPage(String pageName) {
         if (pageName == null) {
             Log.d(TAG, "pageName is null");
@@ -109,6 +161,11 @@ public class BaseFragment extends Fragment {
 
     }
 
+    /**
+     * 对应fragment是否位于栈顶
+     * @param fragmentTag
+     * @return
+     */
     public boolean isFragmentTop(String fragmentTag) {
         Switcher pageSwitcher = this.getSwitcher();
         if (pageSwitcher != null) {
@@ -120,19 +177,56 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    /**
+     * openPageWithNewFragmentManager
+     * @param mFragmentManager
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @param addToBackStack
+     * @return
+     */
     public final Fragment openPageWithNewFragmentManager(FragmentManager mFragmentManager, String pageName, Bundle bundle, Anim anim, boolean addToBackStack) {
-        return this.openPageWithNewFragmentManager(mFragmentManager, pageName, bundle, SwitchBean.convertAnimations(anim), addToBackStack);
+        return PageManager.getInstance().openPageWithNewFragmentManager(mFragmentManager, pageName, bundle, SwitchBean.convertAnimations(anim), addToBackStack);
     }
 
+    /**
+     * openPageWithNewFragmentManager
+     * @param mFragmentManager
+     * @param pageName
+     * @param bundle
+     * @param animations
+     * @param addToBackStack
+     * @return
+     */
     public final Fragment openPageWithNewFragmentManager(FragmentManager mFragmentManager, String pageName, Bundle bundle, int[] animations, boolean addToBackStack) {
-        Fragment frg = PageManager.getInstance().openPageWithNewFragmentManager(mFragmentManager, pageName, bundle, animations, addToBackStack);
-        return frg;
+        return PageManager.getInstance().openPageWithNewFragmentManager(mFragmentManager, pageName, bundle, animations, addToBackStack);
     }
 
+    /**
+     * openPageForResultWithNewFragmentManager
+     * @param mFragmentManager
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @param addToBackStack
+     * @param requestCode
+     * @return
+     */
     public final Fragment openPageForResultWithNewFragmentManager(FragmentManager mFragmentManager, String pageName, Bundle bundle, Anim anim, boolean addToBackStack, int requestCode) {
         return this.openPageForResultWithNewFragmentManager(mFragmentManager, pageName, bundle, SwitchBean.convertAnimations(anim), addToBackStack, requestCode);
     }
 
+    /**
+     * openPageForResultWithNewFragmentManager
+     * @param mFragmentManager
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @param addToBackStack
+     * @param requestCode
+     * @return
+     */
     public final Fragment openPageForResultWithNewFragmentManager(FragmentManager mFragmentManager, String pageName, Bundle bundle, int[] anim, boolean addToBackStack, int requestCode) {
         BaseFragment frg = (BaseFragment) this.openPageWithNewFragmentManager(mFragmentManager, pageName, bundle, anim, addToBackStack);
         if (frg == null) {
@@ -149,21 +243,69 @@ public class BaseFragment extends Fragment {
         return frg;
     }
 
-    public void setFragmentFinishListener(OnFragmentFinishListener listener) {
-        this.mFragmentFinishListener = listener;
-    }
-
+    /**
+     * 重新该方法用于获得返回的数据
+     * @param requestCode 请求码
+     * @param resultCode 返回结果码
+     * @param data 返回数据
+     */
     public void onFragmentResult(int requestCode, int resultCode, Intent data) {
     }
 
+    /**
+     * 在当前activity中打开一个fragment，并添加到返回栈中
+     * @param pageName Fragemnt 名，在page.json中配置。
+     * @param bundle 页面跳转时传递的参数
+     * @param anim  指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
+     * @return
+     */
     public final Fragment openPage(String pageName, Bundle bundle, Anim anim) {
         return this.openPage(pageName, bundle, SwitchBean.convertAnimations(anim), true);
     }
 
-    public final Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack) {
-        return this.openPage(pageName, bundle, anim, true, false);
+    /**
+     * 在当前activity中打开一个fragment，并添加到返回栈中
+     * @param pageName Fragemnt 名，在page.json中配置。
+     * @param bundle 页面跳转时传递的参数
+     * @param anim 指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
+     * @return
+     */
+    public final Fragment openPage(String pageName, Bundle bundle, int[] anim) {
+        return this.openPage(pageName, bundle, anim, true);
     }
 
+    /**
+     * 在当前activity中打开一个fragment，并设置是否添加到返回栈
+     * @param pageName Fragemnt 名，在page.json中配置。
+     * @param bundle 页面跳转时传递的参数
+     * @param anim 指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
+     * @param addToBackStack 是否添加到用户操作栈中
+     * @return
+     */
+    public final Fragment openPage(String pageName, Bundle bundle, Anim anim, boolean addToBackStack) {
+        return this.openPage(pageName, bundle, SwitchBean.convertAnimations(anim), addToBackStack);
+    }
+    /**
+     * 在当前activity中打开一个fragment，并设置是否添加到返回栈
+     * @param pageName Fragemnt 名，在page.json中配置。
+     * @param bundle 页面跳转时传递的参数
+     * @param anim 指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
+     * @param addToBackStack 是否添加到用户操作栈中
+     * @return
+     */
+    public final Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack) {
+        return this.openPage(pageName, bundle, anim, addToBackStack, false);
+    }
+
+    /**
+     * 打开一个fragment并设置是否新开activity，设置是否添加返回栈
+     * @param pageName Fragemnt 名，在page.json中配置。
+     * @param bundle 页面跳转时传递的参数
+     * @param anim 指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
+     * @param addToBackStack  是否添加到用户操作栈中
+     * @param newActivity 该页面是否新建一个Activity
+     * @return
+     */
     public final Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack, boolean newActivity) {
         if (pageName == null) {
             Log.d(TAG, "pageName is null");
@@ -171,7 +313,7 @@ public class BaseFragment extends Fragment {
         }
         Switcher switcher = this.getSwitcher();
         if (switcher != null) {
-            SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack);
+            SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack,newActivity);
             return switcher.openPage(page);
         } else {
             Log.d(TAG, "pageSwitcher is null");
@@ -179,14 +321,16 @@ public class BaseFragment extends Fragment {
         }
     }
 
-    public final Fragment openPage(String pageName, Bundle bundle, int[] anim) {
-        return this.openPage(pageName, bundle, anim, true);
-    }
 
-    public final Fragment openPage(String pageName, Bundle bundle, Anim anim, boolean addToBackStack) {
-        return this.openPage(pageName, bundle, SwitchBean.convertAnimations(anim), true);
-    }
-
+    /**
+     * 打开一个fragment并设置是否新开activity，设置是否添加返回栈
+     * @param pageName Fragemnt 名，在page.json中配置。
+     * @param bundle 页面跳转时传递的参数
+     * @param anim 指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
+     * @param addToBackStack  是否添加到用户操作栈中
+     * @param newActivity 该页面是否新建一个Activity
+     * @return
+     */
     public final Fragment openPage(String pageName, Bundle bundle, Anim anim, boolean addToBackStack, boolean newActivity) {
         return this.openPage(pageName, bundle, SwitchBean.convertAnimations(anim), addToBackStack, newActivity);
     }
@@ -213,10 +357,38 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @return
+     */
+    public Fragment gotoPage(String pageName, Bundle bundle, Anim anim) {
+        return this.gotoPage(pageName, bundle,anim,false);
+
+    }
+    /**
+     * 打开fragment并请求获得返回值
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @param requestCode 请求码
+     * @return
+     */
     public final Fragment openPageForResult(String pageName, Bundle bundle, Anim anim, int requestCode) {
         return this.openPageForResult(false, pageName, bundle, anim, requestCode);
     }
 
+    /**
+     * 打开fragment并请求获得返回值,并设置是否在新activity中打开
+     * @param newActivity
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @param requestCode
+     * @return
+     */
     public final Fragment openPageForResult(boolean newActivity, String pageName, Bundle bundle, Anim anim, int requestCode) {
 
         Switcher pageSwitcher = this.getSwitcher();
@@ -260,7 +432,5 @@ public class BaseFragment extends Fragment {
         mActivity = null;
     }
 
-    public interface OnFragmentFinishListener {
-        void onFragmentResult(int requestCode, int resultCode, Intent intent);
-    }
+
 }

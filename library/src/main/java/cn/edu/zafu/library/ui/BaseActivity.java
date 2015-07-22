@@ -34,6 +34,8 @@ import cn.edu.zafu.library.switcher.SwitchBean;
 import cn.edu.zafu.library.switcher.Switcher;
 
 /**
+ * 页面跳转都通过AppStubActivity 嵌套Fragment来实现,动态替换fragment只需要指定相应的参数。 避免Activity 需要再manifest中注册的问题。
+ * 1.管理应用中所有AppStubActivity 实例。 2.管理AppStubActivity 实例和fragment的跳转
  * User:lizhangqu(513163535@qq.com)
  * Date:2015-07-22
  * Time: 09:32
@@ -41,9 +43,13 @@ import cn.edu.zafu.library.switcher.Switcher;
 public class BaseActivity extends FragmentActivity implements Switcher {
     private static final String TAG = BaseActivity.class.getSimpleName();
     private static List<WeakReference<BaseActivity>> mActivities = new ArrayList<WeakReference<BaseActivity>>();
+    //所有activity的引用
     private Handler mHandler = null;
+    protected SwitchBean mFirstSwitchBean;//记录首个，用于页面切换
     private WeakReference<BaseActivity> mCurrentInstance = null;
+    //当前activity的引用
     private BaseFragment mFragmentForResult = null;
+
     private int mFragmentRequestCode = -1;
     /**
      * 仅用于接受应用退出广播，程序退出时有机会做一些必要的清理工作
@@ -136,6 +142,10 @@ public class BaseActivity extends FragmentActivity implements Switcher {
         return null;
     }
 
+    /**
+     * 保存数据
+     * @param outState
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Field[] fields = this.getClass().getDeclaredFields();
@@ -192,6 +202,10 @@ public class BaseActivity extends FragmentActivity implements Switcher {
         super.onSaveInstanceState(outState);
     }
 
+    /**
+     * 恢复数据
+     * @param savedInstanceState
+     */
     private void loadActivitySavedData(Bundle savedInstanceState) {
         Field[] fields = this.getClass().getDeclaredFields();
         Field.setAccessible(fields, true);
@@ -243,10 +257,15 @@ public class BaseActivity extends FragmentActivity implements Switcher {
         }
     }
 
+    /**
+     * 初始化intent
+     * @param mNewIntent
+     */
     private void init(Intent mNewIntent) {
         try {
             SwitchBean page = mNewIntent.getParcelableExtra("SwitchBean");
             String startActivityForResult = mNewIntent.getStringExtra("startActivityForResult");
+            this.mFirstSwitchBean = page;
             if (page != null) {
                 BaseFragment fragment = null;
                 boolean addToBackStack = page.isAddToBackStack();
@@ -274,6 +293,9 @@ public class BaseActivity extends FragmentActivity implements Switcher {
         }
     }
 
+    /**
+     * 打印，调试用
+     */
     private void printAllActivities() {
         Log.d(TAG, "------------BaseActivity print all------------" + mActivities.size());
         for (WeakReference<BaseActivity> ref : mActivities) {
@@ -286,12 +308,24 @@ public class BaseActivity extends FragmentActivity implements Switcher {
         }
     }
 
+    /**
+     * 结束activity，设置是否显示动画
+     * @param activity
+     * @param showAnimation
+     */
     private void finishActivity(BaseActivity activity, boolean showAnimation) {
         if (activity != null) {
             activity.finish();
         }
         if (showAnimation) {
             //动画，待实现
+            int[] animations = null;
+            if (activity.mFirstSwitchBean != null && activity.mFirstSwitchBean.getAnim() != null) {
+                animations = activity.mFirstSwitchBean.getAnim();
+            }
+            if (animations != null && animations.length >= 4) {
+                overridePendingTransition(animations[2], animations[3]);
+            }
         }
     }
 
@@ -422,6 +456,13 @@ public class BaseActivity extends FragmentActivity implements Switcher {
         return null;
     }
 
+    /**
+     * 当前activiti中弹fragment
+     * @param pageName
+     * @param bundle
+     * @param findAcitivity
+     * @return
+     */
     protected boolean popFragmentInActivity(final String pageName, Bundle bundle, BaseActivity findAcitivity) {
         if (pageName == null || findAcitivity == null || findAcitivity.isFinishing()) {
             return false;
@@ -438,8 +479,7 @@ public class BaseActivity extends FragmentActivity implements Switcher {
                             }
                         }, 100);
                     }
-                    //((BaseActivity) frg).onFragmentDataReset(bundle);
-                    //待实现
+                    ((BaseFragment) frg).onFragmentDataReset(bundle);
                     return true;
                 }
             }
@@ -447,10 +487,15 @@ public class BaseActivity extends FragmentActivity implements Switcher {
         return false;
     }
 
+    /**
+     * 根据Switchpage打开activity
+     * @param page
+     */
     public void startActivity(SwitchBean page) {
         try {
             Intent intent = new Intent(this, BaseActivity.class);
             intent.putExtra("SwitchBean", page);
+
             this.startActivity(intent);
             int[] animations = page.getAnim();
             if (animations != null && animations.length >= 2) {
@@ -462,6 +507,11 @@ public class BaseActivity extends FragmentActivity implements Switcher {
         }
     }
 
+    /**
+     * 根据SwitchBean打开fragment
+     * @param page
+     * @return
+     */
     @Override
     public Fragment openPage(SwitchBean page) {
         boolean addToBackStack = page.isAddToBackStack();
@@ -478,42 +528,93 @@ public class BaseActivity extends FragmentActivity implements Switcher {
 
     }
 
+    /**
+     * 打开fragment，并设置是否新开activity，设置是否添加到返回栈
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @param addToBackStack
+     * @param newActivity
+     * @return
+     */
     @Override
     public Fragment openPage(String pageName, Bundle bundle, Anim anim, boolean addToBackStack, boolean newActivity) {
         SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack, newActivity);
         return openPage(page);
     }
 
+    /**
+     * 打开fragment，并设置是否新开activity，设置是否添加到返回栈
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @param addToBackStack
+     * @param newActivity
+     * @return
+     */
     @Override
     public Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack, boolean newActivity) {
         SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack, newActivity);
         return openPage(page);
     }
 
+    /**
+     * 打开fragment，并设置是否添加到返回栈
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @param addToBackStack
+     * @return
+     */
     @Override
     public Fragment openPage(String pageName, Bundle bundle, Anim anim, boolean addToBackStack) {
         SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack);
         return openPage(page);
     }
 
+    /**
+     * 打开fragment，并设置是否添加到返回栈
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @param addToBackStack
+     * @return
+     */
     @Override
     public Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack) {
         SwitchBean page = new SwitchBean(pageName, bundle, anim, addToBackStack);
         return openPage(page);
     }
-
+    /**
+     * 打开fragment
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @return
+     */
     @Override
     public Fragment openPage(String pageName, Bundle bundle, Anim anim) {
         SwitchBean page = new SwitchBean(pageName, bundle, anim);
         return openPage(page);
     }
 
+    /**
+     * 打开fragment
+     * @param pageName
+     * @param bundle
+     * @param anim
+     * @return
+     */
     @Override
     public Fragment openPage(String pageName, Bundle bundle, int[] anim) {
         SwitchBean page = new SwitchBean(pageName, bundle, anim);
         return openPage(page);
     }
 
+    /**
+     * 移除无用fragment
+     * @param fragmentLists
+     */
     @Override
     public void removeUnlessFragment(List<String> fragmentLists) {
         if (this.isFinishing()) {
@@ -536,10 +637,17 @@ public class BaseActivity extends FragmentActivity implements Switcher {
         }
     }
 
+    /**
+     * 给BaseFragment调用
+     * @param page
+     * @param fragment
+     * @return
+     */
     @Override
     public Fragment openPageForResult(SwitchBean page, BaseFragment fragment) {
         if (page != null) {
             if (page.isNewActivity()) {
+                Log.d(TAG,"openPageForResult start new activity-----"+fragment.getPageName());
                 mFragmentForResult=fragment;
                 mFragmentRequestCode=page.getRequestCode();
                 startActivityForResult(page);
@@ -585,6 +693,12 @@ public class BaseActivity extends FragmentActivity implements Switcher {
         }
     }
 
+    /**
+     * 如果是fragment发起的由fargment处理，否则默认处理
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult init-----------" + requestCode + " " + resultCode);
@@ -594,8 +708,29 @@ public class BaseActivity extends FragmentActivity implements Switcher {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * 注解了该注解数据会被保存
+     */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
     public @interface SaveWithActivity {
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        try {
+            super.startActivity(intent);
+        } catch (Exception e) {
+            Log.d(TAG,"startActivity"+e.getMessage());
+        }
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        try {
+            super.startActivityForResult(intent, requestCode);
+        } catch (Exception e) {
+            Log.d(TAG,"startActivityForResult"+e.getMessage());
+        }
     }
 }

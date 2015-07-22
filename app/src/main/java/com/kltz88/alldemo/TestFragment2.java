@@ -24,10 +24,11 @@ public class TestFragment2 extends BaseFragment {
                 //App.exitApp();
                 //openPage("test1", null, Anim.slide, true);
                 Intent in = new Intent();
-                in.putExtra("test1","========");
-                in.putExtra("test2","!!!!!!!!!!");
-                in.putExtra("test3","@@@@@@@@");
-                setFragmentResult(102, in);
+                in.putExtra("test1", "========");
+                in.putExtra("test2", "!!!!!!!!!!");
+                in.putExtra("test3", "@@@@@@@@");
+
+                getActivity().setResult(102, in);
                 popToBack();
             }
         });

@@ -28,6 +28,7 @@ public class TestFragment1 extends BaseFragment {
                 openPageForResult("test2",null, Anim.slide,101);
             }
         });
+
         return view;
     }
     @Override
