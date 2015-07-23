@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import cn.edu.zafu.library.ui.BaseFragment;
+import cn.edu.zafu.library.base.BaseFragment;
 
 
 /**
@@ -27,7 +27,7 @@ public class TestFragment2 extends BaseFragment {
                 in.putExtra("test1", "========");
                 in.putExtra("test2", "!!!!!!!!!!");
                 in.putExtra("test3", "@@@@@@@@");
-
+                setFragmentResult(103, in);
                 getActivity().setResult(102, in);
                 popToBack();
             }

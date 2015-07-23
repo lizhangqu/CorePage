@@ -7,8 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import cn.edu.zafu.library.anim.Anim;
-import cn.edu.zafu.library.ui.BaseFragment;
+import cn.edu.zafu.library.base.BaseFragment;
+import cn.edu.zafu.library.core.CoreAnim;
 
 
 /**
@@ -25,7 +25,7 @@ public class TestFragment1 extends BaseFragment {
             public void onClick(View v) {
 
                 //openPage("test2",null, Anim.slide,true);
-                openPageForResult("test2",null, Anim.slide,101);
+                openPageForResult("test2", null, CoreAnim.slide, 101);
             }
         });
 
@@ -33,7 +33,17 @@ public class TestFragment1 extends BaseFragment {
     }
     @Override
     public void onFragmentResult(int requestCode, int resultCode, Intent data) {
-        Log.d("Test", requestCode + " " + resultCode + " " + data.getStringExtra("test1"));
+        Log.e("Test onResult fragment", requestCode + " " + resultCode + " ");
         super.onFragmentResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle arguments = getArguments();
+        String param1 = arguments.getString("param1");
+        String param2 = arguments.getString("param2");
+        String param3 = arguments.getString("t");
+        Log.e("tag", param1 + "  " + param2 + "  " + param3);
     }
 }

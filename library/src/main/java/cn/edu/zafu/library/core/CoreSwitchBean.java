@@ -1,4 +1,4 @@
-package cn.edu.zafu.library.switcher;
+package cn.edu.zafu.library.core;
 
 import android.os.Bundle;
 import android.os.Parcel;
@@ -7,7 +7,6 @@ import android.os.Parcelable;
 import java.util.Arrays;
 
 import cn.edu.zafu.library.R;
-import cn.edu.zafu.library.anim.Anim;
 
 /**
  * 页面跳转控制参数
@@ -15,16 +14,16 @@ import cn.edu.zafu.library.anim.Anim;
  * Date:2015-07-22
  * Time: 09:34
  */
-public class SwitchBean implements Parcelable {
-    public static final Parcelable.Creator<SwitchBean> CREATOR = new Parcelable.Creator<SwitchBean>() {
+public class CoreSwitchBean implements Parcelable {
+    public static final Parcelable.Creator<CoreSwitchBean> CREATOR = new Parcelable.Creator<CoreSwitchBean>() {
         @Override
-        public SwitchBean createFromParcel(Parcel in) {
-            return new SwitchBean(in);
+        public CoreSwitchBean createFromParcel(Parcel in) {
+            return new CoreSwitchBean(in);
         }
 
         @Override
-        public SwitchBean[] newArray(int size) {
-            return new SwitchBean[size];
+        public CoreSwitchBean[] newArray(int size) {
+            return new CoreSwitchBean[size];
         }
     };
     private String mPageName;
@@ -40,68 +39,74 @@ public class SwitchBean implements Parcelable {
     private int requestCode = -1;
 
     //fragment跳转
-    public SwitchBean(String pageName) {
+    public CoreSwitchBean(String pageName) {
         this.mPageName = pageName;
     }
 
-    public SwitchBean(String pageName, Bundle bundle) {
-        this.mPageName = pageName;
-        this.mBundle = bundle;
-    }
-
-    public SwitchBean(String pageName, Bundle bundle, Anim anim) {
+    public CoreSwitchBean(String pageName, Bundle bundle) {
         this.mPageName = pageName;
         this.mBundle = bundle;
-        this.setAnim(anim);
     }
 
-    public void setAnim(Anim anim) {
+    public CoreSwitchBean(String pageName, Bundle bundle, CoreAnim coreAnim) {
+        this.mPageName = pageName;
+        this.mBundle = bundle;
+        this.setAnim(coreAnim);
+    }
+
+    public void setAnim(CoreAnim anim) {
         mAnim = convertAnimations(anim);
     }
 
-    public static int[] convertAnimations(Anim anim) {
-        if (anim == Anim.present) {
+    /**
+     * 动画转化，根据枚举类返回int数组
+     *
+     * @param coreAnim
+     * @return
+     */
+    public static int[] convertAnimations(CoreAnim coreAnim) {
+        if (coreAnim == CoreAnim.present) {
             int[] animations = {R.anim.push_in_down, R.anim.push_no_ani, R.anim.push_no_ani, R.anim.push_out_down};
             return animations;
-        } else if (anim == Anim.fade) {
+        } else if (coreAnim == CoreAnim.fade) {
             int[] animations = {R.anim.alpha_in, R.anim.alpha_out, R.anim.alpha_in, R.anim.alpha_out};
             return animations;
-        } else if (anim == Anim.slide) {
+        } else if (coreAnim == CoreAnim.slide) {
             int[] animations = {R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right};
             return animations;
         }
         return null;
     }
 
-    public SwitchBean(String pageName, Bundle bundle, int[] anim) {
+    public CoreSwitchBean(String pageName, Bundle bundle, int[] anim) {
         this.mPageName = pageName;
         this.mBundle = bundle;
         this.mAnim = anim;
     }
 
-    public SwitchBean(String pageName, Bundle bundle, Anim anim, boolean addToBackStack) {
+    public CoreSwitchBean(String pageName, Bundle bundle, CoreAnim coreAnim, boolean addToBackStack) {
         this.mPageName = pageName;
         this.mBundle = bundle;
-        this.setAnim(anim);
+        this.setAnim(coreAnim);
         this.mAddToBackStack = addToBackStack;
     }
 
-    public SwitchBean(String pageName, Bundle bundle, int[] anim, boolean addToBackStack) {
+    public CoreSwitchBean(String pageName, Bundle bundle, int[] anim, boolean addToBackStack) {
         this.mPageName = pageName;
         this.mBundle = bundle;
         this.mAnim = anim;
         this.mAddToBackStack = addToBackStack;
     }
 
-    public SwitchBean(String pageName, Bundle bundle, Anim anim, boolean addToBackStack, boolean newActivity) {
+    public CoreSwitchBean(String pageName, Bundle bundle, CoreAnim coreAnim, boolean addToBackStack, boolean newActivity) {
         this.mPageName = pageName;
         this.mBundle = bundle;
-        this.setAnim(anim);
+        this.setAnim(coreAnim);
         this.mAddToBackStack = addToBackStack;
         this.mNewActivity = newActivity;
     }
 
-    public SwitchBean(String pageName, Bundle bundle, int[] anim, boolean addToBackStack, boolean newActivity) {
+    public CoreSwitchBean(String pageName, Bundle bundle, int[] anim, boolean addToBackStack, boolean newActivity) {
         this.mPageName = pageName;
         this.mBundle = bundle;
         this.mAnim = anim;
@@ -109,7 +114,17 @@ public class SwitchBean implements Parcelable {
         this.mNewActivity = newActivity;
     }
 
-    protected SwitchBean(Parcel in) {
+    public CoreSwitchBean(String pageName, Bundle bundle, int[] anim, boolean addToBackStack, boolean newActivity, int requestCode) {
+        this.mPageName = pageName;
+        this.mBundle = bundle;
+        this.mAnim = anim;
+        this.mAddToBackStack = addToBackStack;
+        this.mNewActivity = newActivity;
+        this.requestCode = requestCode;
+    }
+
+
+    protected CoreSwitchBean(Parcel in) {
         mPageName = in.readString();
         mBundle = in.readBundle();
         int[] a = {in.readInt(), in.readInt(), in.readInt(), in.readInt()};
@@ -159,6 +174,13 @@ public class SwitchBean implements Parcelable {
         mBundle = bundle;
     }
 
+    public int getRequestCode() {
+        return requestCode;
+    }
+
+    public void setRequestCode(int requestCode) {
+        this.requestCode = requestCode;
+    }
     @Override
     public String toString() {
         return "SwitchBean{" +
@@ -167,6 +189,7 @@ public class SwitchBean implements Parcelable {
                 ", mAnim=" + Arrays.toString(mAnim) +
                 ", mAddToBackStack=" + mAddToBackStack +
                 ", mNewActivity=" + mNewActivity +
+                ", requestCode=" + requestCode +
                 '}';
     }
 
@@ -205,11 +228,5 @@ public class SwitchBean implements Parcelable {
         out.writeInt(requestCode);
     }
 
-    public int getRequestCode() {
-        return requestCode;
-    }
 
-    public void setRequestCode(int requestCode) {
-        this.requestCode = requestCode;
-    }
 }

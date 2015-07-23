@@ -5,10 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import cn.edu.zafu.library.anim.Anim;
-import cn.edu.zafu.library.switcher.SwitchBean;
-import cn.edu.zafu.library.ui.BaseActivity;
-import cn.edu.zafu.library.ui.BaseFragment;
+import cn.edu.zafu.library.base.BaseActivity;
+import cn.edu.zafu.library.core.CoreAnim;
 
 
 public class MainActivity extends BaseActivity {
@@ -16,14 +14,18 @@ public class MainActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        openPage("test1", null, Anim.none, true);
+        openPage("test1", null, CoreAnim.none, true);
         findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SwitchBean bean=new SwitchBean("test2",null, Anim.slide,true,true);
+               /* SwitchBean bean=new SwitchBean("test2",null, Anim.slide,true,true);
+                bean.setRequestCode(100);
                 BaseFragment fragment=getActiveFragment();
 
-                openPageForResult(bean, getActiveFragment());
+                openPageForResult(bean, getActiveFragment());*/
+                Bundle b = new Bundle();
+                b.putString("t", "111111");
+                openPage("test1", b, CoreAnim.slide);
             }
         });
 
@@ -31,7 +33,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("Test", requestCode + " " + resultCode + " " + data.getStringExtra("test1"));
+        Log.e("Test from activity", requestCode + " " + resultCode + " ");
         super.onActivityResult(requestCode, resultCode, data);
     }
 }

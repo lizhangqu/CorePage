@@ -1,4 +1,4 @@
-package cn.edu.zafu.library.page;
+package cn.edu.zafu.library.core;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,9 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cn.edu.zafu.library.R;
-import cn.edu.zafu.library.switcher.Switcher;
-import cn.edu.zafu.library.ui.BaseActivity;
-import cn.edu.zafu.library.ui.BaseFragment;
+import cn.edu.zafu.library.base.BaseFragment;
 
 /**
  * 跳转页面管理
@@ -30,29 +28,33 @@ import cn.edu.zafu.library.ui.BaseFragment;
  * Date:2015-07-22
  * Time: 09:34
  */
-public class PageManager {
-    private static final String TAG = PageManager.class.getSimpleName();
-    private volatile static PageManager mInstance = null;
+public class CorePageManager {
+    private static final String TAG = CorePageManager.class.getSimpleName();
+    //日志TAG
+    private volatile static CorePageManager mInstance = null;
+    //单例
     private Context mContext;
-    private Map<String, Page> mPageMap = new HashMap<String, Page>();
+    //Context上下文
+    private Map<String, CorePage> mPageMap = new HashMap<String, CorePage>();
+    //保存page的map
 
     /**
      * 构造函数私有化
      */
-    private PageManager() {
+    private CorePageManager() {
 
     }
 
     /**
      * 获得单例
      *
-     * @return
+     * @return PageManager
      */
-    public static PageManager getInstance() {
+    public static CorePageManager getInstance() {
         if (mInstance == null) {
-            synchronized (PageManager.class) {
+            synchronized (CorePageManager.class) {
                 if (mInstance == null) {
-                    mInstance = new PageManager();
+                    mInstance = new CorePageManager();
                 }
             }
         }
@@ -62,7 +64,7 @@ public class PageManager {
     /**
      * 初始化配置
      *
-     * @param context
+     * @param context 上下文
      */
     public void init(Context context) {
         try {
@@ -78,6 +80,7 @@ public class PageManager {
      */
 
     private void readConfig() {
+        Log.d(TAG, "readConfig from json");
         String content = readFileFromAssets(mContext, "page.json");
         JSONArray jsonArray = JSON.parseArray(content);
         Iterator<Object> iterator = jsonArray.iterator();
@@ -94,17 +97,17 @@ public class PageManager {
                 Log.d(TAG, "page Name is null or pageClass is null");
                 return;
             }
-            mPageMap.put(pageName, new Page(pageName, pageClazz, pageParams));
+            mPageMap.put(pageName, new CorePage(pageName, pageClazz, pageParams));
             Log.d(TAG, "put a page:" + pageName);
         }
-        Log.d(TAG, "finished get pages,page size：" + mPageMap.size());
+        Log.d(TAG, "finished read pages,page size：" + mPageMap.size());
     }
 
     /**
      * 从assets目录下读取文件
      *
-     * @param context
-     * @param fileName
+     * @param context 上下文
+     * @param fileName 文件名
      * @return
      */
     private String readFileFromAssets(Context context, String fileName) {
@@ -124,10 +127,10 @@ public class PageManager {
     /**
      * 新增新页面
      *
-     * @param name
-     * @param clazz
-     * @param params
-     * @return
+     * @param name 页面名
+     * @param clazz 页面class
+     * @param params 页面参数
+     * @return 是否新增成功
      */
     public boolean putPage(String name, Class<? extends BaseFragment> clazz, Map<String, String> params) {
         if (TextUtils.isEmpty(name) || clazz == null) {
@@ -138,16 +141,16 @@ public class PageManager {
             Log.d(TAG, "page has already put!");
             return false;
         }
-        Page page = new Page(name, clazz.getName(), buildParams(params));
+        CorePage corePage = new CorePage(name, clazz.getName(), buildParams(params));
         Log.d(TAG, "put a page:" + name);
         return true;
     }
 
     /**
-     * 从hashMap中得到bundle
+     * 从hashMap中得到参数的json格式
      *
-     * @param params
-     * @return
+     * @param params 页面map形式参数
+     * @return json格式参数
      */
     private String buildParams(Map<String, String> params) {
         if (params == null) {
@@ -159,15 +162,17 @@ public class PageManager {
     }
 
     /**
+     * 页面跳转核心函数之一
      * 打开一个Fragement,如果返回栈中有则出栈，否则新建
      *
-     * @param fragmentManager
-     * @param pageName
-     * @param bundle
-     * @param animations
-     * @return
+     * @param fragmentManager FragmentManager管理类
+     * @param pageName 页面别名
+     * @param bundle 参数
+     * @param animations 动画
+     * @return 成功跳转到的fragment
      */
     public Fragment gotoPage(FragmentManager fragmentManager, String pageName, Bundle bundle, int[] animations) {
+        Log.d(TAG, "gotoPage:" + pageName);
         Fragment fragment = null;
         if (fragmentManager != null) {
             fragment = fragmentManager.findFragmentByTag(pageName);
@@ -182,25 +187,26 @@ public class PageManager {
     }
 
     /**
+     * 页面跳转核心函数之一
      * 打开一个fragemnt
      *
-     * @param fragmentManager
-     * @param pageName
-     * @param bundle
-     * @param animations
-     * @param addToBackStack
+     * @param fragmentManager FragmentManager管理类
+     * @param pageName  页面名
+     * @param bundle 参数
+     * @param animations 动画类型
+     * @param addToBackStack 是否添加到返回栈
      * @return
      */
     public Fragment openPageWithNewFragmentManager(FragmentManager fragmentManager, String pageName, Bundle bundle, int[] animations, boolean addToBackStack) {
         BaseFragment fragment = null;
         try {
-            Page page = this.mPageMap.get(pageName);
-            if (page == null) {
+            CorePage corePage = this.mPageMap.get(pageName);
+            if (corePage == null) {
                 Log.d(TAG, "Page:" + pageName + " is null");
                 return null;
             }
-            fragment = (BaseFragment) Class.forName(page.getClazz()).newInstance();
-            Bundle pageBundle = buildBundle(page);
+            fragment = (BaseFragment) Class.forName(corePage.getClazz()).newInstance();
+            Bundle pageBundle = buildBundle(corePage);
             if (bundle != null) {
                 pageBundle.putAll(bundle);
             }
@@ -208,7 +214,7 @@ public class PageManager {
             fragment.setPageName(pageName);
 
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            if (animations != null) {
+            if (animations != null && animations.length >= 4) {
                 fragmentTransaction.setCustomAnimations(animations[0], animations[1], animations[2], animations[3]);
             }
             Fragment fragmentContainer = fragmentManager.findFragmentById(R.id.fragment_container);
@@ -237,15 +243,15 @@ public class PageManager {
     /**
      * 根据page，从pageParams中获得bundle
      *
-     * @param page
-     * @return
+     * @param corePage 页面
+     * @return 页面的参数
      */
-    private Bundle buildBundle(Page page) {
+    private Bundle buildBundle(CorePage corePage) {
         Bundle bundle = new Bundle();
         String key = null;
         Object value = null;
-        if (page != null && page.getParams() != null) {
-            JSONObject j = JSON.parseObject(page.getParams());
+        if (corePage != null && corePage.getParams() != null) {
+            JSONObject j = JSON.parseObject(corePage.getParams());
             if (j != null) {
                 Set<String> keySet = j.keySet();
                 if (keySet != null) {
@@ -264,12 +270,11 @@ public class PageManager {
     /**
      * 判断fragment是否位于栈顶
      *
-     * @param context
-     * @param fragmentTag
+     * @param context 上下文
+     * @param fragmentTag fragment的tag
      * @return
      */
-    public boolean isFragmentTop(Context context, String fragmentTag) {
-        //待实现
+   /* public boolean isFragmentTop(Context context, String fragmentTag) {
         if (context != null && context instanceof Switcher) {
             return ((Switcher) context).isFragmentTop(fragmentTag);
         } else {
@@ -280,5 +285,5 @@ public class PageManager {
                 return false;
             }
         }
-    }
+    }*/
 }

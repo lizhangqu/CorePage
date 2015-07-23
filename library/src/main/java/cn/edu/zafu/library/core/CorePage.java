@@ -1,4 +1,4 @@
-package cn.edu.zafu.library.page;
+package cn.edu.zafu.library.core;
 
 import java.io.Serializable;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Date:2015-07-22
  * Time: 09:34
  */
-public class Page implements Serializable {
+public class CorePage implements Serializable {
     private static final long serialVersionUID = 3736359137726536495L;
 
     private String mName;
@@ -18,7 +18,7 @@ public class Page implements Serializable {
     private String mParams;
     //传入参数，json object结构
 
-    public Page(String name, String clazz, String params) {
+    public CorePage(String name, String clazz, String params) {
         mName = name;
         mClazz = clazz;
         mParams = params;

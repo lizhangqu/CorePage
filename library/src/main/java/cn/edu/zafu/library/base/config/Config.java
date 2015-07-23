@@ -1,4 +1,4 @@
-package cn.edu.zafu.library;
+package cn.edu.zafu.library.base.config;
 
 /**
  * User:lizhangqu(513163535@qq.com)
@@ -6,5 +6,7 @@ package cn.edu.zafu.library;
  * Time: 12:24
  */
 public class Config {
+
     public final static String ACTION_EXIT_APP = "cn.edu.zafu.library.exit";
+    //本地广播退出
 }
