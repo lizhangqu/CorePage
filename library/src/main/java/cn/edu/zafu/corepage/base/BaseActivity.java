@@ -33,8 +33,8 @@ import cn.edu.zafu.corepage.core.CoreSwitchBean;
 import cn.edu.zafu.corepage.core.CoreSwitcher;
 
 /**
- * 页面跳转都通过AppStubActivity 嵌套Fragment来实现,动态替换fragment只需要指定相应的参数。 避免Activity 需要再manifest中注册的问题。
- * 1.管理应用中所有AppStubActivity 实例。 2.管理AppStubActivity 实例和fragment的跳转
+ * 页面跳转都通过BaseActivity 嵌套Fragment来实现,动态替换fragment只需要指定相应的参数。 避免Activity 需要再manifest中注册的问题。
+ * 1.管理应用中所有BaseActivity 实例。 2.管理BaseActivity 实例和fragment的跳转
  * User:lizhangqu(513163535@qq.com)
  * Date:2015-07-22
  * Time: 09:32
