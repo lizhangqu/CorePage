@@ -6,3 +6,6 @@
 .DS_Store
 /build
 /captures
+/library/library.iml
+/sample/sample.iml
+/AllDemo.iml
