@@ -1,15 +1,25 @@
 [
   {
+    "name": "main",
+    "class": "cn.edu.zafu.corepage.sample.MainFragment",
+    "params": ""
+  },
+  {
     "name": "test1",
-    "class": "com.kltz88.alldemo.TestFragment1",
-    "params": {
-      "param1": "value1",
-      "param2": "value2"
-    }
+    "class": "cn.edu.zafu.corepage.sample.TestFragment1",
+    "params": ""
   },
   {
     "name": "test2",
-    "class": "com.kltz88.alldemo.TestFragment2",
+    "class": "cn.edu.zafu.corepage.sample.TestFragment2",
     "params": ""
+  },
+  {
+    "name": "test3",
+    "class": "cn.edu.zafu.corepage.sample.TestFragment3",
+    "params": {
+      "key1":"value1",
+      "key2":"value2"
+    }
   }
 ]

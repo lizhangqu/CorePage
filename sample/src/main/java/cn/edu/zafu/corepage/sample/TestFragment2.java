@@ -21,25 +21,18 @@ public class TestFragment2 extends BaseFragment {
         view.findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //App.exitApp();
-                //openPage("test1", null, Anim.slide, true);
-                Intent in = new Intent();
-                in.putExtra("test1", "========");
-                in.putExtra("test2", "!!!!!!!!!!");
-                in.putExtra("test3", "@@@@@@@@");
-                setFragmentResult(103, in);
-                getActivity().setResult(102, in);
+                Intent intent=new Intent();
+                Bundle bundle=new Bundle();
+                bundle.putString("data","this is a result");
+                intent.putExtras(bundle);
+                setFragmentResult(500,intent);
                 popToBack();
             }
         });
         return view;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
