@@ -520,6 +520,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     public void onBackPressed() {
         if (this.getSupportFragmentManager().getBackStackEntryCount() == 1) {
             this.finishActivity(this, true);
+
         } else {
             super.onBackPressed();
         }
@@ -781,6 +782,8 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     private void finishActivity(BaseActivity activity, boolean showAnimation) {
         if (activity != null) {
             activity.finish();
+            mActivities.remove(mCurrentInstance);
+            //从activity列表中移除当前实例
         }
         if (showAnimation) {
             //动画
