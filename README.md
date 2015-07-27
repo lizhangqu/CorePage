@@ -9,7 +9,7 @@ Changelog
 
 Current version 0.01 released on 27th July 2015
 
-https://github.com/lizhangqu/CorePage/CHANGELOG.md
+https://github.com/lizhangqu/CorePage/blob/master/CHANGELOG.md
 
 
 Features
