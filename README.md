@@ -1,4 +1,4 @@
-CorePage 一个基于Fragment页面跳转的基础框架
+CorePage a page jump framework based on Fragment
 ====================================
 
 [ ![Download](https://api.bintray.com/packages/lizhangqu/maven/corepage/images/download.svg) ](https://bintray.com/lizhangqu/maven/corepage/_latestVersion)  
@@ -9,16 +9,16 @@ Changelog
 
 Current version 0.01 released on 27th July 2015
 
-https://github.com/lizhangqu/CorePage/blob/master/CHANGELOG.md
+See detail in https://github.com/lizhangqu/CorePage/blob/master/CHANGELOG.md
 
 
 Features
 --------
- - 所有你的Activity必须继承BaseActivity,所有Frgment必须继承BaseFragment，在Manifest中声明Application为cn.edu.zafu.library.base.BaseApplication。
- - 你的入口Activity中无需调用setContentView函数设置布局，一切布局由fragment进行设置
- - 页面跳转全都通过openpage函数进行跳转，可设置显示动画类型，是否添加到返回栈，是否新开activity
- - 需要页面返回结果的调用openPageForResult进行页面跳转，处理完后调用setFragmentResult设置返回结果，并调用popToBack返回。在请求方Fragment中重写onFragmentResult获得返回结果
- - 页面配置文件位于assets/page.json内，页面名，class名为必须，params可选，参数会通过bundle传递
+ - All your Activity must **extends BaseActivity**,All your Fragment must **extends BaseFragment**,use **cn.edu.zafu.library.base.BaseApplication** as your Application name.
+ - Your entry Activity doesn't need  use setContentView method to set a view,all your views should be set in your Fragments.
+ - Page jump based on method **openpage**,you can set animation type ,wether  add to back stack,open a new activity or not.
+ - If you need the page return a result ,you should use **openPageForResult** to open page,then use **setFragmentResult** to set result and use **popToBack** to retuen.Override **onFragmentResult** to get the return result.
+ - All your pages need config in **assets/page.json**,**page name** and **class** is **required**,**page params** is **option**,the params will be used through **bundle**
  - Full details and documentation can be found in the library project
 
 Examples
@@ -40,6 +40,51 @@ Usage
 dependencies {
   compile 'cn.edu.zafu:corepage:0.0.1'
 }
+```
+
+**config in assets/page.json**
+
+```
+[
+  {
+    "name": "page1",
+    "class": "cn.edu.zafu.corepage.sample.PageFragment1",
+    "params": ""
+  },
+  {
+    "name": "page2",
+    "class": "cn.edu.zafu.corepage.sample.PageFragment2",
+    "params": {
+      "key1":"value1",
+      "key2":"value2"
+    }
+  }
+]
+```
+
+**open page**
+
+```
+openPage(pageName,bundle,coreAnim);
+// CoreAnim.slide, CoreAnim.fade, CoreAnim.present, CoreAnim.none
+openPage(pageName,bundle,coreAnim,isAddToBackStack);
+openPage(pageName,bundle,coreAnim,isAddToBackStack,isNewActivity);
+```
+
+**open page for result**
+
+```
+//call this in the opener fragment
+openPageForResult(pageName,bundle,coreAnim,requestCode);
+
+//call this in the opened fragment to set result and return
+setFragmentResult(500,intent);
+popToBack(); 
+
+//Override this method in the opener fragment to get the result
+public void onFragmentResult(int requestCode, int resultCode, Intent data) {
+ super.onFragmentResult(requestCode, resultCode, data);
+} 
 ```
 
 
