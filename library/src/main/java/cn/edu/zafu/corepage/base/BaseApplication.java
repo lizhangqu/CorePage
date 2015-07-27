@@ -9,7 +9,7 @@ import cn.edu.zafu.corepage.base.config.Config;
 import cn.edu.zafu.corepage.core.CorePageManager;
 
 /**
- *
+ * 全局Application基类，用于初始化Page
  * User:lizhangqu(513163535@qq.com)
  * Date:2015-07-22
  * Time: 09:35
@@ -42,6 +42,10 @@ public class BaseApplication extends Application {
         BaseActivity.unInit();
     }
 
+    /**
+     * 获得LocalBroadcastManager对象
+     * @return LocalBroadcastManager对象
+     */
     public static LocalBroadcastManager getLocalBroadcastManager() {
         if (mLocalBroadcatManager == null) {
             mLocalBroadcatManager = LocalBroadcastManager.getInstance(mContext);

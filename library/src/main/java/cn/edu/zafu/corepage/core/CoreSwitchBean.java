@@ -62,8 +62,8 @@ public class CoreSwitchBean implements Parcelable {
     /**
      * 动画转化，根据枚举类返回int数组
      *
-     * @param coreAnim
-     * @return
+     * @param coreAnim 动画枚举
+     * @return 转化后的动画数组
      */
     public static int[] convertAnimations(CoreAnim coreAnim) {
         if (coreAnim == CoreAnim.present) {

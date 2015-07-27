@@ -1,6 +1,7 @@
 package cn.edu.zafu.corepage.base.config;
 
 /**
+ * 全局配置类
  * User:lizhangqu(513163535@qq.com)
  * Date:2015-07-22
  * Time: 12:24

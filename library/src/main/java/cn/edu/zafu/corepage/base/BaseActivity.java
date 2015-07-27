@@ -41,10 +41,13 @@ import cn.edu.zafu.corepage.core.CoreSwitcher;
  */
 public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     private static final String TAG = BaseActivity.class.getSimpleName();
+    //日志TAG
     private static List<WeakReference<BaseActivity>> mActivities = new ArrayList<WeakReference<BaseActivity>>();
-    protected CoreSwitchBean mFirstCoreSwitchBean;//记录首个，用于页面切换
-    //所有activity的引用
+    //应用中所有BaseActivity的引用
+    protected CoreSwitchBean mFirstCoreSwitchBean;
+    //记录首个CoreSwitchBean，用于页面切换
     private Handler mHandler = null;
+    //主线程Handler
     private WeakReference<BaseActivity> mCurrentInstance = null;
     //当前activity的引用
     private BaseFragment mFragmentForResult = null;
@@ -69,7 +72,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 返回最上层的activity
      *
-     * @return
+     * @return 栈顶Activity
      */
     public static BaseActivity getTopActivity() {
         if (mActivities != null) {
@@ -95,7 +98,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 获得当前活动页面名
-     * @return
+     * @return 当前页名
      */
     protected String getPageName() {
         BaseFragment frg = getActiveFragment();
@@ -140,7 +143,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 是否是主线程
-     * @return
+     * @return 是否是主线程
      */
     private boolean isMainThread() {
         return Thread.currentThread() == this.getMainLooper().getThread();
@@ -148,8 +151,8 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 是否位于栈顶
-     * @param fragmentTag
-     * @return
+     * @param fragmentTag fragment的tag
+     * @return 指定Fragment是否位于栈顶
      */
     @Override
     public boolean isFragmentTop(String fragmentTag) {
@@ -176,8 +179,8 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 查找fragment
-     * @param pageName
-     * @return
+     * @param pageName page的名字
+     * @return 是否找到对应Fragment
      */
     @Override
     public boolean findPage(String pageName) {
@@ -211,8 +214,8 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 弹出并用bundle刷新数据，在onFragmentDataReset中回调
-     * @param page
-     * @return
+     * @param page page的名字
+     * @return  跳转到对应的fragment的对象
      */
     @Override
     public Fragment gotoPage(CoreSwitchBean page) {
@@ -251,10 +254,10 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 当前activiti中弹fragment
-     * @param pageName
-     * @param bundle
-     * @param findAcitivity
-     * @return
+     * @param pageName page的名字
+     * @param bundle 传递的参数
+     * @param findAcitivity 当前activity
+     * @return 是否弹出成功
      */
     protected boolean popFragmentInActivity(final String pageName, Bundle bundle, BaseActivity findAcitivity) {
         if (pageName == null || findAcitivity == null || findAcitivity.isFinishing()) {
@@ -282,7 +285,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 根据Switchpage打开activity
-     * @param page
+     * @param page CoreSwitchBean对象
      */
     public void startActivity(CoreSwitchBean page) {
         try {
@@ -311,8 +314,8 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 根据SwitchBean打开fragment
-     * @param page
-     * @return
+     * @param page CoreSwitchBean对象
+     * @return 打开的Fragment对象
      */
     @Override
     public Fragment openPage(CoreSwitchBean page) {
@@ -333,7 +336,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 移除无用fragment
-     * @param fragmentLists
+     * @param fragmentLists 移除的fragment列表
      */
     @Override
     public void removeUnlessFragment(List<String> fragmentLists) {
@@ -359,9 +362,9 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 给BaseFragment调用
-     * @param page
-     * @param fragment
-     * @return
+     * @param page CoreSwitchBean对象
+     * @param fragment 要求返回结果的BaseFragment对象
+     * @return 打开的fragment对象
      */
     @Override
     public Fragment openPageForResult(CoreSwitchBean page, BaseFragment fragment) {
@@ -397,6 +400,10 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
         return null;
     }
 
+    /**
+     *
+     * @param page CoreSwitchBean对象
+     */
     public void startActivityForResult(CoreSwitchBean page) {
         try {
             Intent intent = new Intent(this, BaseActivity.class);
@@ -416,12 +423,12 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 打开fragment，并设置是否新开activity，设置是否添加到返回栈
      *
-     * @param pageName
-     * @param bundle
-     * @param coreAnim
-     * @param addToBackStack
-     * @param newActivity
-     * @return
+     * @param pageName 页面名
+     * @param bundle 参数
+     * @param coreAnim 动画
+     * @param addToBackStack 返回栈
+     * @param newActivity 新activity
+     * @return 打开的fragment对象
      */
     public Fragment openPage(String pageName, Bundle bundle, CoreAnim coreAnim, boolean addToBackStack, boolean newActivity) {
         CoreSwitchBean page = new CoreSwitchBean(pageName, bundle, coreAnim, addToBackStack, newActivity);
@@ -431,12 +438,12 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 打开fragment，并设置是否新开activity，设置是否添加到返回栈
      *
-     * @param pageName
-     * @param bundle
-     * @param anim
-     * @param addToBackStack
-     * @param newActivity
-     * @return
+     * @param pageName 页面名
+     * @param bundle 参数
+     * @param anim 动画
+     * @param addToBackStack 返回栈
+     * @param newActivity 新activity
+     * @return 打开的fragment对象
      */
     public Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack, boolean newActivity) {
         CoreSwitchBean page = new CoreSwitchBean(pageName, bundle, anim, addToBackStack, newActivity);
@@ -446,11 +453,11 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 打开fragment，并设置是否添加到返回栈
      *
-     * @param pageName
-     * @param bundle
-     * @param coreAnim
-     * @param addToBackStack
-     * @return
+     * @param pageName 页面名
+     * @param bundle 参数
+     * @param coreAnim 动画
+     * @param addToBackStack 返回栈
+     * @return 打开的fragment对象
      */
     public Fragment openPage(String pageName, Bundle bundle, CoreAnim coreAnim, boolean addToBackStack) {
         CoreSwitchBean page = new CoreSwitchBean(pageName, bundle, coreAnim, addToBackStack);
@@ -460,11 +467,11 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 打开fragment，并设置是否添加到返回栈
      *
-     * @param pageName
-     * @param bundle
-     * @param anim
-     * @param addToBackStack
-     * @return
+     * @param pageName 页面名
+     * @param bundle 参数
+     * @param anim 动画
+     * @param addToBackStack 返回栈
+     * @return 打开的fragment对象
      */
     public Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack) {
         CoreSwitchBean page = new CoreSwitchBean(pageName, bundle, anim, addToBackStack);
@@ -474,10 +481,10 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 打开fragment
      *
-     * @param pageName
-     * @param bundle
-     * @param coreAnim
-     * @return
+     * @param pageName 页面名
+     * @param bundle 参数
+     * @param coreAnim 动画
+     * @return 打开的fragment对象
      */
     public Fragment openPage(String pageName, Bundle bundle, CoreAnim coreAnim) {
         CoreSwitchBean page = new CoreSwitchBean(pageName, bundle, coreAnim);
@@ -487,10 +494,10 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 打开fragment
      *
-     * @param pageName
-     * @param bundle
-     * @param anim
-     * @return
+     * @param pageName 页面名
+     * @param bundle 参数
+     * @param anim 动画
+     * @return 打开的fragment对象
      */
     public Fragment openPage(String pageName, Bundle bundle, int[] anim) {
         CoreSwitchBean page = new CoreSwitchBean(pageName, bundle, anim);
@@ -499,9 +506,9 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 如果是fragment发起的由fragment处理，否则默认处理
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode 请求码
+     * @param resultCode 结果码
+     * @param data 返回数据
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -557,9 +564,9 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
 
     /**
      * 如果fragment中处理了则fragment处理否则activity处理
-     * @param keyCode
-     * @param event
-     * @return
+     * @param keyCode keyCode码
+     * @param event KeyEvent对象
+     * @return 是否处理时间
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -578,7 +585,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 获得当前活动fragmnet
      *
-     * @return
+     * @return 当前活动Fragment对象
      */
     public BaseFragment getActiveFragment() {
         if (this.isFinishing()) {
@@ -598,7 +605,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 保存数据
      *
-     * @param outState
+     * @param outState Bundle对象
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -668,7 +675,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 恢复数据
      *
-     * @param savedInstanceState
+     * @param savedInstanceState Bundle对象
      */
     private void loadActivitySavedData(Bundle savedInstanceState) {
         Field[] fields = this.getClass().getDeclaredFields();
@@ -739,7 +746,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 初始化intent
      *
-     * @param mNewIntent
+     * @param mNewIntent Intent对象
      */
     private void init(Intent mNewIntent) {
         try {
@@ -776,8 +783,8 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 结束activity，设置是否显示动画
      *
-     * @param activity
-     * @param showAnimation
+     * @param activity BaseActivity对象
+     * @param showAnimation 是否显示动画
      */
     private void finishActivity(BaseActivity activity, boolean showAnimation) {
         if (activity != null) {

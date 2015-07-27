@@ -48,7 +48,7 @@ public class CorePageManager {
     /**
      * 获得单例
      *
-     * @return PageManager
+     * @return PageManager 单例
      */
     public static CorePageManager getInstance() {
         if (mInstance == null) {
@@ -195,7 +195,7 @@ public class CorePageManager {
      * @param bundle 参数
      * @param animations 动画类型
      * @param addToBackStack 是否添加到返回栈
-     * @return
+     * @return 打开的Fragment对象
      */
     public Fragment openPageWithNewFragmentManager(FragmentManager fragmentManager, String pageName, Bundle bundle, int[] animations, boolean addToBackStack) {
         BaseFragment fragment = null;
@@ -272,7 +272,7 @@ public class CorePageManager {
      *
      * @param context 上下文
      * @param fragmentTag fragment的tag
-     * @return
+     * @return 是否是栈顶Fragment
      */
    /* public boolean isFragmentTop(Context context, String fragmentTag) {
         if (context != null && context instanceof Switcher) {

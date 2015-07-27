@@ -12,12 +12,14 @@ import cn.edu.zafu.corepage.core.CoreSwitcher;
 import cn.edu.zafu.corepage.core.CoreAnim;
 
 /**
+ * 全局基类BaseFragment
  * User:lizhangqu(513163535@qq.com)
  * Date:2015-07-22
  * Time: 09:33
  */
 public class BaseFragment extends Fragment {
     private static final String TAG = BaseFragment.class.getSimpleName();
+    //日志tag
     protected Activity mActivity;
     //所在activity
     private String mPageName;
@@ -65,9 +67,9 @@ public class BaseFragment extends Fragment {
 
     /**
      * 将Activity中onKeyDown在Fragment中实现，
-     * @param keyCode
-     * @param event
-     * @return
+     * @param keyCode keyCode码
+     * @param event KeyEvent对象
+     * @return 是否处理
      */
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return false;
@@ -75,7 +77,7 @@ public class BaseFragment extends Fragment {
 
     /**
      * 数据设置，回调
-     * @param bundle
+     * @param bundle 刷新数据的Bundle对象
      */
     public void onFragmentDataReset(Bundle bundle) {
 
@@ -113,7 +115,7 @@ public class BaseFragment extends Fragment {
 
     /**
      * 得到页面切换Switcher
-     * @return Switcher
+     * @return 页面切换Switcher
      */
     public CoreSwitcher getSwitcher() {
         synchronized (BaseFragment.this) {// 加强保护，保证pageSwitcher 不为null
@@ -132,6 +134,10 @@ public class BaseFragment extends Fragment {
         return mPageCoreSwitcher;
     }
 
+    /**
+     * 设置Switcher
+     * @param pageCoreSwitcher CoreSwitcher对象
+     */
     public void setSwitcher(CoreSwitcher pageCoreSwitcher) {
         this.mPageCoreSwitcher = pageCoreSwitcher;
     }
@@ -187,7 +193,7 @@ public class BaseFragment extends Fragment {
      * @param pageName Fragemnt 名，在page.json中配置。
      * @param bundle 页面跳转时传递的参数
      * @param coreAnim  指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
-     * @return
+     * @return 打开的fragment对象
      */
     public final Fragment openPage(String pageName, Bundle bundle, CoreAnim coreAnim) {
         return this.openPage(pageName, bundle, CoreSwitchBean.convertAnimations(coreAnim), true);
@@ -199,7 +205,7 @@ public class BaseFragment extends Fragment {
      * @param bundle 页面跳转时传递的参数
      * @param anim 指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
      * @param addToBackStack 是否添加到用户操作栈中
-     * @return
+     * @return 打开的fragment对象
      */
     public final Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack) {
         return this.openPage(pageName, bundle, anim, addToBackStack, false);
@@ -212,7 +218,7 @@ public class BaseFragment extends Fragment {
      * @param anim 指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
      * @param addToBackStack  是否添加到用户操作栈中
      * @param newActivity 该页面是否新建一个Activity
-     * @return
+     * @return 打开的fragment对象
      */
     public final Fragment openPage(String pageName, Bundle bundle, int[] anim, boolean addToBackStack, boolean newActivity) {
         if (pageName == null) {
@@ -235,7 +241,7 @@ public class BaseFragment extends Fragment {
      * @param pageName Fragemnt 名，在page.json中配置。
      * @param bundle   页面跳转时传递的参数
      * @param anim     指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
-     * @return
+     * @return 打开的fragment对象
      */
     public final Fragment openPage(String pageName, Bundle bundle, int[] anim) {
         return this.openPage(pageName, bundle, anim, true);
@@ -248,7 +254,7 @@ public class BaseFragment extends Fragment {
      * @param bundle         页面跳转时传递的参数
      * @param coreAnim       指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
      * @param addToBackStack 是否添加到用户操作栈中
-     * @return
+     * @return 打开的fragment对象
      */
     public final Fragment openPage(String pageName, Bundle bundle, CoreAnim coreAnim, boolean addToBackStack) {
         return this.openPage(pageName, bundle, CoreSwitchBean.convertAnimations(coreAnim), addToBackStack, false);
@@ -261,17 +267,17 @@ public class BaseFragment extends Fragment {
      * @param coreAnim 指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
      * @param addToBackStack  是否添加到用户操作栈中
      * @param newActivity 该页面是否新建一个Activity
-     * @return
+     * @return 打开的fragment对象
      */
     public final Fragment openPage(String pageName, Bundle bundle, CoreAnim coreAnim, boolean addToBackStack, boolean newActivity) {
         return this.openPage(pageName, bundle, CoreSwitchBean.convertAnimations(coreAnim), addToBackStack, newActivity);
     }
 
     /**
-     * @param pageName
-     * @param bundle
-     * @param coreAnim
-     * @return
+     * @param pageName 页面名
+     * @param bundle 参数
+     * @param coreAnim 动画
+     * @return 打开的fragment对象
      */
     public Fragment gotoPage(String pageName, Bundle bundle, CoreAnim coreAnim) {
         return this.gotoPage(pageName, bundle, coreAnim,false);
@@ -286,7 +292,7 @@ public class BaseFragment extends Fragment {
      * @param bundle      页面跳转时传递的参数
      * @param coreAnim        指定的动画理性 none/slide(左右平移)/present(由下向上)/fade(fade 动画)
      * @param newActivity 该页面是否新建一个Activity
-     * @return
+     * @return 打开的fragment对象
      */
     public Fragment gotoPage(String pageName, Bundle bundle, CoreAnim coreAnim, boolean newActivity) {
         CoreSwitcher pageCoreSwitcher = this.getSwitcher();
@@ -302,11 +308,11 @@ public class BaseFragment extends Fragment {
 
     /**
      * 打开fragment并请求获得返回值
-     * @param pageName
-     * @param bundle
-     * @param coreAnim
+     * @param pageName 页面名
+     * @param bundle 参数
+     * @param coreAnim 动画
      * @param requestCode 请求码
-     * @return
+     * @return 打开的fragment对象
      */
     public final Fragment openPageForResult(String pageName, Bundle bundle, CoreAnim coreAnim, int requestCode) {
         return this.openPageForResult(false, pageName, bundle, coreAnim, requestCode);
@@ -314,12 +320,12 @@ public class BaseFragment extends Fragment {
 
     /**
      * 打开fragment并请求获得返回值,并设置是否在新activity中打开
-     * @param newActivity
-     * @param pageName
-     * @param bundle
-     * @param coreAnim
-     * @param requestCode
-     * @return
+     * @param newActivity 是否新开activity
+     * @param pageName 页面名
+     * @param bundle 参数
+     * @param coreAnim 动画
+     * @param requestCode 请求码
+     * @return 打开的fragment对象
      */
     public final Fragment openPageForResult(boolean newActivity, String pageName, Bundle bundle, CoreAnim coreAnim, int requestCode) {
 
@@ -341,7 +347,7 @@ public class BaseFragment extends Fragment {
         mActivity = activity;
     }
 
-    //页面跳转接口
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -350,10 +356,18 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    /**
+     * 获得页面名
+     * @return 页面名
+     */
     public String getPageName() {
         return mPageName;
     }
 
+    /**
+     * 设置页面名
+     * @param pageName 页面名
+     */
     public void setPageName(String pageName) {
         mPageName = pageName;
     }
@@ -364,7 +378,9 @@ public class BaseFragment extends Fragment {
         mActivity = null;
     }
 
-    //页面跳转接口
+    /**
+     * 页面跳转接口
+     */
     public interface OnFragmentFinishListener {
         void onFragmentResult(int requestCode, int resultCode, Intent intent);
     }
