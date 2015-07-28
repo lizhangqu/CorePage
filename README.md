@@ -2,23 +2,23 @@ CorePage a page jump framework based on Fragment
 ====================================
 
 [ ![Download](https://api.bintray.com/packages/lizhangqu/maven/corepage/images/download.svg) ](https://bintray.com/lizhangqu/maven/corepage/_latestVersion)  
-A page jump based Fragment, you can't open page use just a method.It can be used in both Activity andFragment if you make your custom Activity extends BaseActivity and your custom Fragment extends  BaseFragment.And use BaseApplication as your Application
+A page jump based Fragment, you can open a page use just a method.It can be used in both Activity andFragment if you make your custom Activity extends BaseActivity and your custom Fragment extends  BaseFragment.And use BaseApplication as your Application
 
 Changelog
 ---------
 
-Current version 0.01 released on 27th July 2015
+Current version 0.0.1 released on 27th July 2015
 
 See detail in https://github.com/lizhangqu/CorePage/blob/master/CHANGELOG.md
 
 
-Features
+Notices
 --------
  - All your Activity must **extends BaseActivity**,All your Fragment must **extends BaseFragment**,use **cn.edu.zafu.library.base.BaseApplication** as your Application name.
  - Your entry Activity doesn't need  use setContentView method to set a view,all your views should be set in your Fragments.
- - Page jump based on method **openpage**,you can set animation type ,wether  add to back stack,open a new activity or not.
- - If you need the page return a result ,you should use **openPageForResult** to open page,then use **setFragmentResult** to set result and use **popToBack** to retuen.Override **onFragmentResult** to get the return result.
- - All your pages need config in **assets/page.json**,**page name** and **class** is **required**,**page params** is **option**,the params will be used through **bundle**
+ - Page jump based on method **openpage**,you can set an animation type ,weather add to back stack,open a new activity or not.
+ - If you need the page return a result ,you should use **openPageForResult** to open page,then use **setFragmentResult** to set result and use **popToBack** to retuen. Override **onFragmentResult** method to get the return result.
+ - All your fragment pages need configed in **assets/page.json**,**page name** and **class** is **required**,**page params** is **option**,the params will be used through **Bundle**
  - Full details and documentation can be found in the library project
 
 Examples
@@ -62,7 +62,7 @@ dependencies {
 ]
 ```
 
-**open page**
+**open a page**
 
 ```
 openPage(pageName,bundle,coreAnim);
@@ -71,7 +71,7 @@ openPage(pageName,bundle,coreAnim,isAddToBackStack);
 openPage(pageName,bundle,coreAnim,isAddToBackStack,isNewActivity);
 ```
 
-**open page for result**
+**open a page for result**
 
 ```
 //call this in the opener fragment
