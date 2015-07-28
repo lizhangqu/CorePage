@@ -7,7 +7,7 @@ apply plugin: 'maven-publish'
 
 task sourcesJar(type: Jar) {
     //archiveName = PROJ_NAME+"-"+PROJ_VERSION+"-source.jar"
-    //设置生成名字，由于由依赖，不重写名字会有误
+    //设置生成名字
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
 }
@@ -24,7 +24,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 javadoc {
-    options{
+    options {
         encoding "UTF-8"
         charSet 'UTF-8'
         author true
@@ -55,17 +55,15 @@ def pomConfig = {
         }
     }
 
-    /*dependencyManagement{
-        //这里有引号，并且有个空格，否则生成不了依赖，主要是这里的dependencies并不是build.gradle里的dependencies，而gradle会把他当成自身的dependencies处理
-        "dependencies " {
-            dependency{
-                groupId "com.alibaba"
-                artifactId "fastjson"
-                "version " "1.2.6"
-                //同dependencies
-            }
+    //这里有引号，并且有个空格，否则生成不了依赖，主要是这里的dependencies并不是build.gradle里的dependencies，而gradle会把他当成自身的dependencies处理
+    "dependencies " {
+        dependency {
+            groupId "com.alibaba"
+            artifactId "fastjson"
+            "version " "1.2.6"
+            //同dependencies
         }
-    }*/
+    }
 
 }
 
@@ -74,7 +72,7 @@ publishing {
         mavenJava(MavenPublication) {
             artifactId PROJ_ARTIFACTID
 
-            pom{
+            pom {
                 packaging 'aar'
             }
             pom.withXml {
