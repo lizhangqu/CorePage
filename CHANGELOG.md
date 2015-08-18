@@ -1,3 +1,9 @@
 version 0.0.1
 -------------
-基完成所有基本功能，基本无bug
+
+ - complete basic functions
+
+version 0.0.2
+-------------
+
+ - support custom application

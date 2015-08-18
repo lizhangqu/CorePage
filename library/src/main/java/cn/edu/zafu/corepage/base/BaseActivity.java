@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.zafu.corepage.R;
-import cn.edu.zafu.corepage.base.config.Config;
+import cn.edu.zafu.corepage.core.CoreConfig;
 import cn.edu.zafu.corepage.core.CoreAnim;
 import cn.edu.zafu.corepage.core.CorePageManager;
 import cn.edu.zafu.corepage.core.CoreSwitchBean;
@@ -62,7 +62,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(Config.ACTION_EXIT_APP)) {
+            if (action.equals(CoreConfig.ACTION_EXIT_APP)) {
                 Log.d(TAG,"exit from broadcast");
                 finish();
             }
@@ -556,9 +556,9 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
         init(mNewIntent);
         //处理新开activity跳转
         IntentFilter filter = new IntentFilter();
-        filter.addAction(Config.ACTION_EXIT_APP);
+        filter.addAction(CoreConfig.ACTION_EXIT_APP);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
-        BaseApplication.getLocalBroadcastManager().registerReceiver(mExitReceiver, filter);
+        CoreConfig.getLocalBroadcastManager().registerReceiver(mExitReceiver, filter);
         //注册本地广播，接收程序退出广播
     }
 

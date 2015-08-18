@@ -62,6 +62,28 @@ dependencies {
 ]
 ```
 
+**init config**
+```
+public class YourApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        CoreConfig.init(this);
+    }
+}
+```
+
+```
+ <application
+        android:name=".YourApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+    </application>
+```
+
+
 **open a page**
 
 ```
