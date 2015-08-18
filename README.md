@@ -1,20 +1,20 @@
-CorePage a page jump framework based on Fragment
+Corepage a page switch framework based on Fragment
 ====================================
 
 [ ![Download](https://api.bintray.com/packages/lizhangqu/maven/corepage/images/download.svg) ](https://bintray.com/lizhangqu/maven/corepage/_latestVersion)  
-A page jump based Fragment, you can open a page use just a method.It can be used in both Activity andFragment if you make your custom Activity extends BaseActivity and your custom Fragment extends  BaseFragment.And use BaseApplication as your Application
+A page switch framework based on Fragment, you can open a page use just a method.It can be used in both Activity andFragment if you make your custom Activity extends BaseActivity and your custom Fragment extends  BaseFragment.And use BaseApplication as your Application
 
 Changelog
 ---------
 
-Current version 0.0.1 released on 27th July 2015
+Current version 0.0.2 released on 18th August 2015
 
-See detail in https://github.com/lizhangqu/CorePage/blob/master/CHANGELOG.md
+See details in [CHANGELOG](https://github.com/lizhangqu/CorePage/blob/master/CHANGELOG.md)
 
 
 Notices
 --------
- - All your Activity must **extends BaseActivity**,All your Fragment must **extends BaseFragment**,use **cn.edu.zafu.library.base.BaseApplication** as your Application name.
+ - All your Activity must **extends BaseActivity**,All your Fragment must **extends BaseFragment**,use **package.YourApplication** as your Application name and use **CoreConfig.init()** in the override method **onCreate()** to init.
  - Your entry Activity doesn't need  use setContentView method to set a view,all your views should be set in your Fragments.
  - Page jump based on method **openpage**,you can set an animation type ,weather add to back stack,open a new activity or not.
  - If you need the page return a result ,you should use **openPageForResult** to open page,then use **setFragmentResult** to set result and use **popToBack** to retuen. Override **onFragmentResult** method to get the return result.
