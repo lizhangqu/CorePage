@@ -38,7 +38,7 @@ Usage
 
 ```
 dependencies {
-  compile 'cn.edu.zafu:corepage:0.0.1'
+  compile 'cn.edu.zafu:corepage:0.0.2'
 }
 ```
 
