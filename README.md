@@ -7,7 +7,7 @@ A page switch framework based on Fragment, you can open a page use just a method
 Changelog
 ---------
 
-Current version 0.0.2 released on 18th August 2015
+Current version 0.0.4 released on 21th August 2015
 
 See details in [CHANGELOG](https://github.com/lizhangqu/CorePage/blob/master/CHANGELOG.md)
 
