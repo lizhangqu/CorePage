@@ -38,7 +38,7 @@ Usage
 
 ```
 dependencies {
-  compile 'cn.edu.zafu:corepage:0.0.4'
+  compile 'cn.edu.zafu:corepage:0.0.5'
 }
 ```
 
@@ -118,7 +118,39 @@ CoreConfig.setIsOpenAtlas(true);
 CoreConfig.setBundleClassLoader(bundleClassLoader);
 ```
 
-and then you can call any methods as normal.
+
+**custom animation**
+
+if you need to support custom animation,you can use it this way
+```
+int anim[]= {R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right};
+openPage("test1",null, anim);
+```
+
+**read extra page json**
+
+```
+private String pageJson="[" +
+            "  {" +
+            "    'name': 'test4'," +
+            "    'class': 'cn.edu.zafu.corepage.sample.TestFragment4'," +
+            "    'params': ''" +
+            "  }]";
+CoreConfig.readConfig(pageJson);
+```
+
+or init with the json,this will read both the **page.json** in directory assets and the String you given
+
+```
+private String pageJson="[" +
+            "  {" +
+            "    'name': 'test4'," +
+            "    'class': 'cn.edu.zafu.corepage.sample.TestFragment4'," +
+            "    'params': ''" +
+            "  }]";
+CoreConfig.init(this, pageJson);
+```
+
 
 ## License
 

@@ -17,3 +17,9 @@ version 0.0.4
 -------------
 
  - fixed a bug caused by **CoreConfig.setIsOpenAtlas(boolean flag)**
+
+version 0.0.5
+-------------
+
+- support custom page config
+- add a page switch animation called zoom
