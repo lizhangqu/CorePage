@@ -90,6 +90,9 @@ public class CoreSwitchBean implements Parcelable {
         } else if (coreAnim == CoreAnim.slide) {
             int[] animations = {R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right};
             return animations;
+        }else if (coreAnim == CoreAnim.zoom) {
+            int[] animations = {R.anim.zoom_in, R.anim.zoom_out, R.anim.zoom_in, R.anim.zoom_out};
+            return animations;
         }
         return null;
     }

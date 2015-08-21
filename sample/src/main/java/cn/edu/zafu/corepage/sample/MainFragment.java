@@ -50,7 +50,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn1:
-                openPage("test1",null, CoreAnim.none);
+                openPage("test1",null, CoreAnim.slide);
                 break;
             case R.id.btn2:
                 openPage("test1",null,CoreAnim.none);
