@@ -114,6 +114,7 @@ public void onFragmentResult(int requestCode, int resultCode, Intent data) {
 if you need to support OpenAtlas,before you call the method such as **openPage**，you need to set a bundle classloader
 ```
 ClassLoader bundleClassLoader = Atlas.getInstance().getBundleClassLoader(bundlepkgName);
+CoreConfig.setIsOpenAtlas(true);
 CoreConfig.setBundleClassLoader(bundleClassLoader);
 ```
 
