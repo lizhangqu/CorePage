@@ -18,7 +18,9 @@ import cn.edu.zafu.corepage.core.CoreAnim;
  * Time: 16:29
  */
 public class MainFragment extends BaseFragment implements View.OnClickListener {
-    private Button btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8;
+    private Button btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
@@ -36,6 +38,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         btn6= (Button) view.findViewById(R.id.btn6);
         btn7= (Button) view.findViewById(R.id.btn7);
         btn8= (Button) view.findViewById(R.id.btn8);
+        btn9= (Button) view.findViewById(R.id.btn9);
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
         btn3.setOnClickListener(this);
@@ -44,6 +47,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         btn6.setOnClickListener(this);
         btn7.setOnClickListener(this);
         btn8.setOnClickListener(this);
+        btn9.setOnClickListener(this);
     }
 
     @Override
@@ -77,7 +81,9 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
             case R.id.btn8:
                 popToBack();
                 break;
-
+            case R.id.btn9:
+                openPage("test4",null, CoreAnim.present);
+                break;
 
         }
     }

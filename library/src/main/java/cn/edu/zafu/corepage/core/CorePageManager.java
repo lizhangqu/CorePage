@@ -84,19 +84,23 @@ public class CorePageManager {
     public void init(Context context) {
         try {
             mContext = context.getApplicationContext();
-            readConfig();
+
+            String content = readFileFromAssets(mContext, "page.json");
+            readConfig(content);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
+    public void init(Context context,String pageJson) {
+        this.init(context);
+        readConfig(pageJson);
+    }
     /**
      * 从配置文件中读取page
      */
 
-    private void readConfig() {
+    public void readConfig(String content) {
         Log.d(TAG, "readConfig from json");
-        String content = readFileFromAssets(mContext, "page.json");
         JSONArray jsonArray = JSON.parseArray(content);
         Iterator<Object> iterator = jsonArray.iterator();
         JSONObject jsonPage = null;

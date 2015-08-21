@@ -58,9 +58,28 @@ public class CoreConfig {
     private static LocalBroadcastManager mLocalBroadcatManager;
     private static Context mContext;
     private boolean hasInited=false;
+
+    /**
+     * 默认初始化，配置文件在assets/page.json
+     * @param context 上下文
+     */
     public static void init(Context context){
         mContext=context.getApplicationContext();
         CorePageManager.getInstance().init(mContext);
+    }
+
+    /**
+     * 自定义初始化，配置文件信息由外部传入。
+     * @param context 上下文
+     * @param pageJson 配置的json
+     */
+    public static void init(Context context,String pageJson){
+        mContext=context.getApplicationContext();
+        CorePageManager.getInstance().init(mContext,pageJson);
+    }
+
+    public static void readConfig(String pageJson){
+        CorePageManager.getInstance().readConfig(pageJson);
     }
     /**
      * 发送本地广播退出程序

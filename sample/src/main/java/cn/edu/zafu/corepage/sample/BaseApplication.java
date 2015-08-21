@@ -11,12 +11,20 @@ import cn.edu.zafu.corepage.core.CoreConfig;
  * Time: 09:35
  */
 public class BaseApplication extends Application {
-
+    private String pageJson="[" +
+            "  {" +
+            "    'name': 'test4'," +
+            "    'class': 'cn.edu.zafu.corepage.sample.TestFragment4'," +
+            "    'params': ''" +
+            "  }]";
 
     @Override
     public void onCreate() {
         super.onCreate();
-        CoreConfig.init(this);
+        CoreConfig.init(this, pageJson);
+        // or such as this
+        //CoreConfig.init(this);
+        //CoreConfig.readConfig(pageJson);
     }
 
 
