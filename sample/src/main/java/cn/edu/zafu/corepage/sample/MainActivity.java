@@ -12,6 +12,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CoreConfig.setIsOpenAtlas(true);
         openPage("main", null, CoreAnim.none);
 
 

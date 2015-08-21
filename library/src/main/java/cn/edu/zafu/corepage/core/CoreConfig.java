@@ -23,8 +23,8 @@ public class CoreConfig {
         return isOpenAtlas;
     }
 
-    public static void setIsOpenAtlas(boolean isOpenAtlas) {
-        isOpenAtlas = isOpenAtlas;
+    public static void setIsOpenAtlas(boolean isOpenAtlasFlag) {
+        isOpenAtlas = isOpenAtlasFlag;
     }
 
     public static ClassLoader getBundleClassLoader() {
