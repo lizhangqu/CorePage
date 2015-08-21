@@ -1,3 +1,18 @@
+/**
+ * Copyright 2015 ZhangQu Li
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cn.edu.zafu.corepage.base;
 
 import android.content.BroadcastReceiver;
@@ -26,8 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.zafu.corepage.R;
-import cn.edu.zafu.corepage.core.CoreConfig;
 import cn.edu.zafu.corepage.core.CoreAnim;
+import cn.edu.zafu.corepage.core.CoreConfig;
 import cn.edu.zafu.corepage.core.CorePageManager;
 import cn.edu.zafu.corepage.core.CoreSwitchBean;
 import cn.edu.zafu.corepage.core.CoreSwitcher;
@@ -63,7 +78,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(CoreConfig.ACTION_EXIT_APP)) {
-                Log.d(TAG,"exit from broadcast");
+                Log.d(TAG, "exit from broadcast");
                 finish();
             }
         }
@@ -215,7 +230,7 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     /**
      * 弹出并用bundle刷新数据，在onFragmentDataReset中回调
      * @param page page的名字
-     * @return  跳转到对应的fragment的对象
+     * @return 跳转到对应的fragment的对象
      */
     @Override
     public Fragment gotoPage(CoreSwitchBean page) {
@@ -370,31 +385,31 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
     public Fragment openPageForResult(CoreSwitchBean page, BaseFragment fragment) {
         if (page != null) {
             if (page.isNewActivity()) {
-                Log.d(TAG,"openPageForResult start new activity-----"+fragment.getPageName());
-                mFragmentForResult=fragment;
-                mFragmentRequestCode=page.getRequestCode();
+                Log.d(TAG, "openPageForResult start new activity-----" + fragment.getPageName());
+                mFragmentForResult = fragment;
+                mFragmentRequestCode = page.getRequestCode();
                 startActivityForResult(page);
                 return null;
-            }else{
-                String pageName=page.getPageName();
-                Bundle bundle=page.getBundle();
-                int[] animations=page.getAnim();
-                boolean addToBackStack=page.isAddToBackStack();
+            } else {
+                String pageName = page.getPageName();
+                Bundle bundle = page.getBundle();
+                int[] animations = page.getAnim();
+                boolean addToBackStack = page.isAddToBackStack();
                 BaseFragment frg = (BaseFragment) CorePageManager.getInstance().openPageWithNewFragmentManager(getSupportFragmentManager(), pageName, bundle, animations, addToBackStack);
-                if (frg==null){
+                if (frg == null) {
                     return null;
                 }
-                final BaseFragment opener= fragment;
+                final BaseFragment opener = fragment;
                 frg.setRequestCode(page.getRequestCode());
                 frg.setFragmentFinishListener(new BaseFragment.OnFragmentFinishListener() {
                     @Override
                     public void onFragmentResult(int requestCode, int resultCode, Intent intent) {
-                        opener.onFragmentResult(requestCode,resultCode,intent);
+                        opener.onFragmentResult(requestCode, resultCode, intent);
                     }
                 });
                 return frg;
             }
-        }else{
+        } else {
             Log.d(TAG, "openPageForResult.SwitchBean is null");
         }
         return null;
