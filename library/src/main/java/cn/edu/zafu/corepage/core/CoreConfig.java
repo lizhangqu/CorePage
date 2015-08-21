@@ -13,7 +13,30 @@ import cn.edu.zafu.corepage.base.BaseActivity;
  * Time: 12:24
  */
 public class CoreConfig {
+    /**
+     * Atlas支持 start
+     */
+    private static boolean isOpenAtlas=false;
+    private static ClassLoader mBundleClassLoader =null;
 
+    public static boolean isOpenAtlas() {
+        return isOpenAtlas;
+    }
+
+    public static void setIsOpenAtlas(boolean isOpenAtlas) {
+        isOpenAtlas = isOpenAtlas;
+    }
+
+    public static ClassLoader getBundleClassLoader() {
+        return mBundleClassLoader;
+    }
+
+    public static void setBundleClassLoader(ClassLoader classLoader) {
+        mBundleClassLoader = classLoader;
+    }
+    /**
+     * Atlas支持 end
+     */
     public final static String ACTION_EXIT_APP = "cn.edu.zafu.library.exit";
     //本地广播退出
 

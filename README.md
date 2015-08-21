@@ -1,4 +1,4 @@
-Corepage a page switch framework based on Fragment
+Corepage is a page switch framework based on Fragment
 ====================================
 
 [ ![Download](https://api.bintray.com/packages/lizhangqu/maven/corepage/images/download.svg) ](https://bintray.com/lizhangqu/maven/corepage/_latestVersion)  
@@ -109,6 +109,15 @@ public void onFragmentResult(int requestCode, int resultCode, Intent data) {
 } 
 ```
 
+**support OpenAtlas**
+
+if you need to support OpenAtlas,before you call the method such as **openPage**，you need to set a bundle classloader
+```
+ClassLoader bundleClassLoader = Atlas.getInstance().getBundleClassLoader(bundlepkgName);
+CoreConfig.setBundleClassLoader(bundleClassLoader);
+```
+
+and then you can call any methods as normal.
 
 ## License
 

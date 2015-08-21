@@ -205,7 +205,23 @@ public class CorePageManager {
                 Log.d(TAG, "Page:" + pageName + " is null");
                 return null;
             }
-            fragment = (BaseFragment) Class.forName(corePage.getClazz()).newInstance();
+            /**
+             * Atlas的支持 start
+             */
+            if (CoreConfig.isOpenAtlas()){
+                ClassLoader bundleClassLoader = CoreConfig.getBundleClassLoader();
+                if(bundleClassLoader==null){
+                    Log.d(TAG, "OpenAtlas bundle ClassLoader is null!");
+                    return null;
+                }
+                fragment = (BaseFragment) CoreConfig.getBundleClassLoader().loadClass(corePage.getClazz()).newInstance();
+            }else{
+                fragment = (BaseFragment) Class.forName(corePage.getClazz()).newInstance();
+            }
+            /**
+             * Atlas的支持 end
+             */
+
             Bundle pageBundle = buildBundle(corePage);
             if (bundle != null) {
                 pageBundle.putAll(bundle);
@@ -236,10 +252,8 @@ public class CorePageManager {
             Log.d(TAG, "Fragment.error:" + e.getMessage());
             return null;
         }
-
         return fragment;
     }
-
     /**
      * 根据page，从pageParams中获得bundle
      *
