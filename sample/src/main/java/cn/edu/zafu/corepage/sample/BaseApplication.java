@@ -2,6 +2,8 @@ package cn.edu.zafu.corepage.sample;
 
 import android.app.Application;
 
+import com.squareup.leakcanary.LeakCanary;
+
 import cn.edu.zafu.corepage.core.CoreConfig;
 
 /**
@@ -22,6 +24,7 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         CoreConfig.init(this, pageJson);
+        LeakCanary.install(this);
         // or such as this
         //CoreConfig.init(this);
         //CoreConfig.readConfig(pageJson);
