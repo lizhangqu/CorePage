@@ -577,6 +577,13 @@ public class BaseActivity extends FragmentActivity implements CoreSwitcher {
         //注册本地广播，接收程序退出广播
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //解决内存泄露
+        CoreConfig.getLocalBroadcastManager().unregisterReceiver(mExitReceiver);
+    }
+
     /**
      * 如果fragment中处理了则fragment处理否则activity处理
      * @param keyCode keyCode码

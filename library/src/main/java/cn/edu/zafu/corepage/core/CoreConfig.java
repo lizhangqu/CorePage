@@ -77,7 +77,14 @@ public class CoreConfig {
         mContext=context.getApplicationContext();
         CorePageManager.getInstance().init(mContext,pageJson);
     }
-
+    public static void unInit(){
+        Intent intent = new Intent();
+        intent.setAction(CoreConfig.ACTION_EXIT_APP);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        getLocalBroadcastManager().sendBroadcast(intent);
+        BaseActivity.unInit();
+        mLocalBroadcatManager=null;
+    }
     public static void readConfig(String pageJson){
         CorePageManager.getInstance().readConfig(pageJson);
     }
