@@ -98,14 +98,18 @@ public class BaseFragment extends Fragment {
 
     }
 
+
+
+    public interface PopCallback{
+        void run();
+    }
     /**
-     * 用于openPageForResult，获得返回内容后需要再次调openPage的场景
-     * @param result 返回码
-     * @param intent 返回数据intent
+     * 用于openPageForResult，获得返回内容后需要再次调openPage的场景，只适合不新开Activity的情况，如果新开activity请像Activity返回结果那样操作
+     * @param callback 返回码
      */
-    public void popToBackForResult(int result, Intent intent) {
+    public void popToBackForResult(PopCallback callback) {
         this.popToBack(null, null);
-        setFragmentResult(result,intent);
+        callback.run();
     }
     /**
      * 弹出栈顶的Fragment。如果Activity中只有一个Fragemnt时，Acitivity也退出。
