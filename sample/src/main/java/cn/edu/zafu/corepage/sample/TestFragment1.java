@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.squareup.leakcanary.RefWatcher;
+
 import cn.edu.zafu.corepage.base.BaseFragment;
 
 
@@ -27,6 +29,11 @@ public class TestFragment1 extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = BaseApplication.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
 
 }

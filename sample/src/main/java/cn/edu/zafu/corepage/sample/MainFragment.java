@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.squareup.leakcanary.RefWatcher;
+
 import cn.edu.zafu.corepage.base.BaseFragment;
 import cn.edu.zafu.corepage.core.CoreAnim;
 
@@ -98,4 +100,11 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
             Toast.makeText(getActivity(), "requestCode:" + requestCode + " result:" + resultCode+" data:"+extras.getString("data"), Toast.LENGTH_LONG).show();
         }
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = BaseApplication.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
+
 }

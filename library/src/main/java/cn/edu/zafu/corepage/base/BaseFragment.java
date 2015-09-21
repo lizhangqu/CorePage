@@ -99,6 +99,15 @@ public class BaseFragment extends Fragment {
     }
 
     /**
+     * 用于openPageForResult，获得返回内容后需要再次调openPage的场景
+     * @param result 返回码
+     * @param intent 返回数据intent
+     */
+    public void popToBackForResult(int result, Intent intent) {
+        this.popToBack(null, null);
+        setFragmentResult(result,intent);
+    }
+    /**
      * 弹出栈顶的Fragment。如果Activity中只有一个Fragemnt时，Acitivity也退出。
      */
     public void popToBack() {
