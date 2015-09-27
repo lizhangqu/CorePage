@@ -2,7 +2,7 @@ Corepage is a page switch framework based on Fragment
 ====================================
 
 [ ![Download](https://api.bintray.com/packages/lizhangqu/maven/corepage/images/download.svg) ](https://bintray.com/lizhangqu/maven/corepage/_latestVersion)  
-A page switch framework based on Fragment, you can open a page use just a method.It can be used in both Activity andFragment if you make your custom Activity extends BaseActivity and your custom Fragment extends  BaseFragment.And use BaseApplication as your Application
+A page switch framework based on Fragment, you can open a page use just a method.It can be used in both Activity andFragment if you make your custom Activity extends BaseActivity and your custom Fragment extends  BaseFragment.And use BaseApplication as your Application.
 
 Changelog
 ---------
